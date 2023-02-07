@@ -8,7 +8,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
-Repository Structure:
+## Repository Structure:
 
 * :open_file_folder: **code**
   * :open_file_folder: **analysis** -- scripts used to perform the data analysis.
@@ -16,3 +16,21 @@ Repository Structure:
     * :page_facing_up: [02 - Model Fitting](code/analysis/BFMM-paper-modelling.R)
     * :page_facing_up: [03 - Bootstrap and Wald Inference](code/analysis/BFMM-paper-bootstrap.R)
     * :page_facing_up: [04 - Plotting Fixed-Effects Results](code/analysis/BFMM-paper-bootstrap.R)
+  * :open_file_folder: **functions** -- custom functions used to perform the data analysis.
+    * :page_facing_up: [Custom `ggplot2` theme for figures](code/functions/theme_gunning.R)
+    * :page_facing_up: [Functions to help storage and manipulation of `fda::fd` objects](code/functions/functions-helper-smoothing.R)
+    * :page_facing_up: [Function to calculate uncentered FPCA scores](code/functions/function-project-mean-onto-fpcs.R)
+    
+
+## Reproducible Results:
+
+```{r, echo = FALSE}
+results_path <- here::here("outputs", "results")
+boot_time <- readRDS(file = file.path(results_path, "bootstrap-results.rds"))$boot_time
+boot_time_mins <- round(boot_time["elapsed"] / 60, 2)
+n_cores_used <- readRDS(file = file.path(results_path, "bootstrap-results.rds"))$n_cores_used
+B <- readRDS(file = file.path(results_path, "bootstrap-results.rds"))$B
+```
+
+It took **`r boot_time_mins` minutes** to run the bootstrap analysis using **`r B` bootstrap replicates** with computing shared across **`r n_cores_used` cores** on a 2019 MacBook Pro with a 2.4 GHz Quad-Core Intel Core i5 processer and 8 GB of memory.
+

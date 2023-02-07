@@ -12,6 +12,8 @@ source(here::here("code", "functions", "BFMM-paper-helper-functions.R"))
 
 ncores <- parallel::detectCores()
 B <- 2500 # No. of Bootstrap Replicates (Degras, 2017)
+N_simulation_MVN <- 10000
+coverage_level_nominal <- 0.95 # (1 - alpha) level for simultaneous bands.
 
 # Load results: -----------------------------------------------------------
 results_path <- here::here("outputs", "results")
@@ -37,9 +39,8 @@ fixef_names <- names(fixef(lme_fit$full_list[[1]]))
 names(fixef_names) <- fixef_names
 
 
-
 # Do bootstrap of subjects: -----------------------------------------------
-set.seed(1)
+set.seed(1) # so this can be reproduced.
 # and store time:
 boot_time <- system.time(
   boot_result <- bootstrap_of_subjects_coefs(
@@ -72,7 +73,8 @@ fixef_fun_se <- t(sapply(fixef_fun_covar, function(x) {
   sqrt(diag(x))
 }))
 
-# Extract the 
+# Extract the bootstrap samples foe each functional fixed effects.
+# Combine them into matrix:
 fixef_coef_samples_boot <- lapply(
   fixef_names,
   FUN = function(y) {
@@ -82,28 +84,43 @@ fixef_coef_samples_boot <- lapply(
   }
 )
 
+# Sense check dimensions of resultant matrix:
+stopifnot(all(sapply(fixef_coef_samples_boot, function(x) {
+  all(dim(x) == c(B, k_retain))
+})))
 
+# Compute empirical Bootstrap covariance matrices for coefficients:
 fixef_coef_covar_boot <- lapply(fixef_coef_samples_boot, var) 
 
+# Use these to get the bootstrap estimate of the pointwise SD:
 fixef_fun_se_boot <- lapply(fixef_names, function(x) {
   sqrt(diag(Psi %*% fixef_coef_covar_boot[[x]] %*% t(Psi)))
 })
 
 
+# Simultaneous Inference --------------------------------------------------
+
+# Construct joint bootstrap CIs for each fixed effect,
+# using Algorithm described in paper.
+# we draw coefficient samples from the estimated
+# (Bootstrap or Wald) sampling distributions of estimated parameters
+# and combining with basis functions to obtain functional samples:
+
 sim_cb_bootstrap <- lapply(X = fixef_names, FUN = function(x) {
   mvn_sim(coef_point_est = fixef_coef_point[x, , drop = TRUE],
           coef_covar_mat = fixef_coef_covar_boot[[x]],
           Psi_basis = Psi,
-          N_simulation_mvn = 10000, 
-          coverage_level = 0.95)
+          N_simulation_mvn = N_simulation_MVN, 
+          coverage_level = coverage_level_nominal)
 })
 
 sim_cb_wald <- lapply(X = fixef_names, FUN = function(x) {
   mvn_sim(coef_point_est = fixef_coef_point[x, , drop = TRUE],
           coef_covar_mat = diag(fixef_coef_var[x, , drop = TRUE]),
           Psi_basis = Psi,
-          N_simulation_mvn = 10000, 
-          coverage_level = 0.95)})
+          N_simulation_mvn = N_simulation_MVN, 
+          coverage_level = coverage_level_nominal)
+  })
 
 
 
@@ -140,5 +157,7 @@ parameter_results_dt[
 # Save results: -----------------------------------------------------------
 saveRDS(object = list(parameter_results_dt = parameter_results_dt,
                       boot_time = boot_time, 
+                      n_cores_used = ncores,
+                      B = B,
                       boot_result = boot_result),
-  file.path(results_path, "model-fit-results.rds"))
+  file.path(results_path, "bootstrap-results.rds"))
