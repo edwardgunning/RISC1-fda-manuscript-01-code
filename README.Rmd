@@ -16,6 +16,7 @@ knitr::opts_chunk$set(echo = TRUE)
     * :page_facing_up: [02 - Model Fitting](code/analysis/BFMM-paper-modelling.R)
     * :page_facing_up: [03 - Bootstrap and Wald Inference](code/analysis/BFMM-paper-bootstrap.R)
     * :page_facing_up: [04 - Plotting Fixed-Effects Results](code/analysis/BFMM-paper-bootstrap.R)
+    * :page_facing_up: [05 - Plotting Random-Effects Results](code/analysis/BFMM-paper-covariance-results.R)
   * :open_file_folder: **functions** -- custom functions used to perform the data analysis.
     * :page_facing_up: [Custom `ggplot2` theme for figures](code/functions/theme_gunning.R)
     * :page_facing_up: [Functions to help storage and manipulation of `fda::fd` objects](code/functions/functions-helper-smoothing.R)

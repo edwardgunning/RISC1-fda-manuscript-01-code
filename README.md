@@ -15,6 +15,8 @@ using functional data analysis’
       Inference](code/analysis/BFMM-paper-bootstrap.R)
     - :page_facing_up: [04 - Plotting Fixed-Effects
       Results](code/analysis/BFMM-paper-bootstrap.R)
+    - :page_facing_up: [05 - Plotting Random-Effects
+      Results](code/analysis/BFMM-paper-covariance-results.R)
   - :open_file_folder: **functions** – custom functions used to perform
     the data analysis.
     - :page_facing_up: [Custom `ggplot2` theme for
