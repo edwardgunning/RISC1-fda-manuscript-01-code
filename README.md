@@ -17,6 +17,9 @@ using functional data analysis’
       Results](code/analysis/BFMM-paper-bootstrap.R)
     - :page_facing_up: [05 - Plotting Random-Effects
       Results](code/analysis/BFMM-paper-covariance-results.R)
+    - :page_facing_up: [06 - Additional Exploratory Analysis of
+      Random-Effects
+      Results](code/analysis/BFMM-paper-covariance-results.R)
   - :open_file_folder: **functions** – custom functions used to perform
     the data analysis.
     - :page_facing_up: [Custom `ggplot2` theme for
@@ -34,6 +37,9 @@ using functional data analysis’
       [(2)](code/functions/cov_unstruct_test-02.R)
       [(3)](code/functions/cov_unstruct_test-03.R)
       [(4)](code/functions/cov_unstruct_test-04.R)
+    - :page_facing_up: [Function to extract an estimated heteroscedastic
+      residual covariance matrix from an `nlme`
+      object](code/functions/function-get-residual-covariance-matrix.R)
 
 ## Timing Results:
 
