@@ -24,9 +24,9 @@ using functional data analysis’
     - :page_facing_up: [Function to calculate uncentered FPCA
       scores](code/functions/function-project-mean-onto-fpcs.R)
 
-## Reproducible Results:
+## Timing Results:
 
 It took **15.7 minutes** to run the bootstrap analysis using **2500
 bootstrap replicates** with computing shared across **8 cores** on a
 2019 MacBook Pro with a 2.4 GHz Quad-Core Intel Core i5 processer and 8
-GB of memory.
+GB of memory (code ran on 2023-02-07 15:54:28).

@@ -159,5 +159,8 @@ saveRDS(object = list(parameter_results_dt = parameter_results_dt,
                       boot_time = boot_time, 
                       n_cores_used = ncores,
                       B = B,
+                      sessionInfo = sessionInfo(),
+                      R.version.string = R.version.string,
+                      date = Sys.time(),
                       boot_result = boot_result),
   file.path(results_path, "bootstrap-results.rds"))

@@ -4,19 +4,16 @@ library(ggpubr)     # CRAN v0.4.0
 library(fda)        # CRAN v5.5.1
 library(ggplot2)    # CRAN v3.4.0
 library(lme4)       # CRAN v1.1-30
-source(here::here("code", "BFMM-paper-helper-functions.R"))
 
-# Settings for ggplot() figures: ------------------------------------------
-theme_set(theme_bw())
-theme_update(strip.text = element_text(size = 9),
-             text = element_text(size = 9),
-             panel.grid.minor = element_blank(),
-             panel.grid.major = element_blank(),
-             axis.title = element_text(size = 9),
-             legend.title = element_text(hjust = 0.5),
-             legend.key.size = unit(0.95,"line"),
-             legend.text = element_text(size = 8, hjust = 0.5),
-             plot.title = element_text(hjust = 0.5, size = 9.5, face = "bold"))
+
+# -------------------------------------------------------------------------
+source(here::here("code", "functions", "theme_gunning.R"))
+theme_gunning() # set theme
+# + some customisations for plots
+theme_update(panel.grid.major = element_blank(),
+             legend.key.size = unit(0.95,"line"))
+
+
 
 # Path to save the ouputs of analysis: ------------------------------------
 plots_path <- here::here("outputs", "plots", "subject-side")

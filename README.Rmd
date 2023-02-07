@@ -22,7 +22,7 @@ knitr::opts_chunk$set(echo = TRUE)
     * :page_facing_up: [Function to calculate uncentered FPCA scores](code/functions/function-project-mean-onto-fpcs.R)
     
 
-## Reproducible Results:
+## Timing Results:
 
 ```{r, echo = FALSE}
 results_path <- here::here("outputs", "results")
@@ -30,7 +30,9 @@ boot_time <- readRDS(file = file.path(results_path, "bootstrap-results.rds"))$bo
 boot_time_mins <- round(boot_time["elapsed"] / 60, 2)
 n_cores_used <- readRDS(file = file.path(results_path, "bootstrap-results.rds"))$n_cores_used
 B <- readRDS(file = file.path(results_path, "bootstrap-results.rds"))$B
+date <- readRDS(file = file.path(results_path, "bootstrap-results.rds"))$date
 ```
 
-It took **`r boot_time_mins` minutes** to run the bootstrap analysis using **`r B` bootstrap replicates** with computing shared across **`r n_cores_used` cores** on a 2019 MacBook Pro with a 2.4 GHz Quad-Core Intel Core i5 processer and 8 GB of memory.
+It took **`r boot_time_mins` minutes** to run the bootstrap analysis using **`r B` bootstrap replicates** with computing shared across **`r n_cores_used` cores** on a 2019 MacBook Pro with a 2.4 GHz Quad-Core Intel Core i5 processer and 8 GB of memory (code ran on `r date`).
+
 
