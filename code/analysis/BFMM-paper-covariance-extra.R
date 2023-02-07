@@ -371,6 +371,8 @@ ise_dt <- data.table(
 
 non_zero_label <- "No. of Non-Zero Elements in $\\mathbf{S^*}$"
 
+theme_gunning() # set theme
+
 p1 <- ggplot(data = tuning_param_dt) +
   aes(x = tuning_parameter, y = non_zero_elements) +
   geom_point(size = 0.5) +
@@ -482,6 +484,11 @@ zlim_S <- range(S_dt_lng$S_st, S_dt_unstruc_lng$S_st, S_dt_sparse_lng$S_st)
 expand_lim <- c(0.02, 0.02)
 breaks_S <- seq(zlim_S[1], zlim_S[2], length.out = 13)
 
+theme_update(panel.grid.major = element_blank(),
+             legend.title = element_text(hjust = 0.5),
+             legend.key.size = unit(0.95,"line"),
+             legend.text = element_text(size = 8, hjust = 0.5))
+
 S_plot <- ggplot(S_dt_lng) +
   aes(x = s, y = t, z = S_st) +
   scale_x_continuous(expand = expand_lim) +
@@ -506,6 +513,7 @@ S_plot_sparse <- ggplot(S_dt_sparse_lng) +
   scale_y_continuous(expand = expand_lim) +
   geom_contour_filled(breaks = breaks_S) +
   labs(x = "$t_1$", y = "$t_2$", fill = "$\\mathbf{S}(t_1, t_2)$", title = "Sparse Estimate")
+
 
 
 S_combined <- ggarrange(S_plot, S_plot_unstruc, S_plot_sparse, nrow = 1, ncol = 3, common.legend = TRUE, legend = "bottom")
