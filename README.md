@@ -23,6 +23,15 @@ using functional data analysis’
       `fda::fd` objects](code/functions/functions-helper-smoothing.R)
     - :page_facing_up: [Function to calculate uncentered FPCA
       scores](code/functions/function-project-mean-onto-fpcs.R)
+    - :page_facing_up: [Function to calculate unstructured covariance
+      estimates (based off the `denseFLMM`
+      package)](code/functions/functions-unstructured-covariance.R)
+    - :page_facing_up: :page_facing_up: :page_facing_up:
+      :page_facing_up: Tests for the unstructured covariance estimator
+      [(1)](code/functions/cov_unstruct_test-01.R)
+      [(2)](code/functions/cov_unstruct_test-02.R)
+      [(3)](code/functions/cov_unstruct_test-03.R)
+      [(4)](code/functions/cov_unstruct_test-04.R)
 
 ## Timing Results:
 
