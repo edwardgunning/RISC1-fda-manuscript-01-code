@@ -21,7 +21,7 @@ using functional data analysis’
       Random-Effects
       Results](code/analysis/BFMM-paper-covariance-extra.R)
   - :open_file_folder: **functions** – custom functions used to perform
-    the data analysis.
+    the data analysis and simulation
     - :page_facing_up: [Custom `ggplot2` theme for
       figures](code/functions/theme_gunning.R)
     - :page_facing_up: [Functions to help storage and manipulation of
@@ -40,6 +40,14 @@ using functional data analysis’
     - :page_facing_up: [Function to extract an estimated heteroscedastic
       residual covariance matrix from an `nlme`
       object](code/functions/function-get-residual-covariance-matrix.R)
+  - :open_file_folder: **simulation** – scripts to generate and perform
+    the short simulation in the paper
+    - :open_file_folder: [1 - Fit a simple model and generate empirical
+      parameters](code/simulation/BFMM-paper-get-simulation-parameters.R)
+    - :open_file_folder: [2 - Generate Eigenfunctions for the
+      Simulation](code/simulation/BFMM-paper-generate-efuns-simulation.R)
+    - :open_file_folder: [3 - Functions to Generate
+      Data](code/simulation/BFMM-paper-generate-simulated-data.R)
 
 ## Timing Results:
 
