@@ -1,3 +1,9 @@
+# ------------------------------------------------------------------------#
+# Extra analysis on reconstructing covariance function.
+# Use methods of Fieuws, S., & Verbeke, G. (2006) to estimate
+# unstructured S^* and GLASSO to selet which off-diagonal elements
+# ------------------------------------------------------------------------#
+
 
 # Packages ----------------------------------------------------------------
 library(nlme)       # CRAN v3.1-155

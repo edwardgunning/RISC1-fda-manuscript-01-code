@@ -1,3 +1,10 @@
+# -------------------------------------------------------------------------
+# Plotting Fixed-Effects Results + Confidence Intervals
+# and
+# Plot of the effect of self-selected speed!
+# -------------------------------------------------------------------------
+
+# Packages: ---------------------------------------------------------------
 library(data.table) # CRAN v1.14.2
 library(tikzDevice) # CRAN v0.12.3.1
 library(ggpubr)     # CRAN v0.4.0

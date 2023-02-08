@@ -14,12 +14,12 @@ using functional data analysis’
     - :page_facing_up: [03 - Bootstrap and Wald
       Inference](code/analysis/BFMM-paper-bootstrap.R)
     - :page_facing_up: [04 - Plotting Fixed-Effects
-      Results](code/analysis/BFMM-paper-bootstrap.R)
+      Results](code/analysis/BFMM-paper-fixef-results.R)
     - :page_facing_up: [05 - Plotting Random-Effects
       Results](code/analysis/BFMM-paper-covariance-results.R)
     - :page_facing_up: [06 - Additional Exploratory Analysis of
       Random-Effects
-      Results](code/analysis/BFMM-paper-covariance-results.R)
+      Results](code/analysis/BFMM-paper-covariance-extra.R)
   - :open_file_folder: **functions** – custom functions used to perform
     the data analysis.
     - :page_facing_up: [Custom `ggplot2` theme for
