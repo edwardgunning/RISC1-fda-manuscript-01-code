@@ -187,7 +187,8 @@ icc_plot_dt[, .(sqrt(mean((icc - icc_truth)^2))), by = .(scenario)]
 
 
 # Covariance Estimates ----------------------------------------------------
-
+## Extract estimates: ------------------------------------------------------
+# Truths:
 q_true <- results_list$truth$q_vec
 s_true <- results_list$truth$s_vec
 
@@ -199,6 +200,7 @@ Q_true_s2 <- efuns_s2$efuns_U %*% diag(q_true) %*% t(efuns_s2$efuns_U)
 S_true_s1 <- Phi_true %*% diag(s_true) %*% t(Phi_true)
 S_true_s2 <- efuns_s2$efuns_E %*% diag(s_true) %*% t(efuns_s2$efuns_E)
 
+# Model and unstructures estimates:
 Q_array <- ranef_results$Q_array
 S_array <- ranef_results$S_array
 
@@ -218,59 +220,67 @@ S_array_unstruc_s1 <- S_array_unstruc[,, settings$scenario == 1]
 S_array_unstruc_s2 <- S_array_unstruc[,, settings$scenario == 2]
 
 
-
-
 ## Look at Q first --------------------------------------------------------
 
-Q_error_s1 <- sweep(Q_array_s1, MARGIN = c(1:2), 
+# Calculate Errors:
+Q_error_s1 <- sweep(Q_array_s1,
+                    MARGIN = c(1:2), 
                     STATS = Q_true_s1,
                     FUN = "-", 
                     check.margin = TRUE)
 
-Q_error_s2 <- sweep(Q_array_s2, MARGIN = c(1:2), 
+Q_error_s2 <- sweep(Q_array_s2,
+                    MARGIN = c(1:2), 
                     STATS = Q_true_s2,
-                    FUN = "-", check.margin = TRUE)
-
-
-Q_error_unstruc_s1 <- sweep(Q_array_unstruc_s1, MARGIN = c(1:2), 
-                    STATS = Q_true_s1,
                     FUN = "-", 
                     check.margin = TRUE)
 
-Q_error_unstruc_s2 <- sweep(Q_array_unstruc_s2, MARGIN = c(1:2), 
-                    STATS = Q_true_s2,
-                    FUN = "-", check.margin = TRUE)
+Q_error_unstruc_s1 <- sweep(Q_array_unstruc_s1,
+                            MARGIN = c(1:2), 
+                            STATS = Q_true_s1,
+                            FUN = "-", 
+                            check.margin = TRUE)
 
-ise_Q_s1 <- apply(Q_error_s1, c(3), function(x) {
-  sum(x^2)
-})
+Q_error_unstruc_s2 <- sweep(Q_array_unstruc_s2,
+                            MARGIN = c(1:2), 
+                            STATS = Q_true_s2,
+                            FUN = "-",
+                            check.margin = TRUE)
 
-ise_Q_s2 <- apply(Q_error_s2, c(3), function(x) {
-  sum(x^2)
-})
+ise_Q_s1 <- apply(Q_error_s1,
+                  MARGIN = c(3),
+                  FUN = function(x) {
+                    sum(x^2)
+                    })
 
-ise_Q_unstruc_s1 <- apply(Q_error_unstruc_s1, c(3), function(x) {
-  sum(x^2)
-})
+ise_Q_s2 <- apply(Q_error_s2,
+                  MARGIN = c(3),
+                  FUN = function(x) {
+                    sum(x^2)
+                    })
 
-ise_Q_unstruc_s2 <- apply(Q_error_unstruc_s2, c(3), function(x) {
-  sum(x^2)
-})
+ise_Q_unstruc_s1 <- apply(Q_error_unstruc_s1,
+                          MARGIN = c(3), 
+                          FUN = function(x) {
+                            sum(x^2)
+                            })
 
+ise_Q_unstruc_s2 <- apply(Q_error_unstruc_s2,
+                          MARGIN = c(3), 
+                          FUN = function(x) {
+                            sum(x^2)
+                            })
 
+# Quick and dirty plot, we'll tidy later!
 boxplot(ise_Q_s1, ise_Q_unstruc_s1, ise_Q_s2, ise_Q_unstruc_s2)
 
 
 # S -----------------------------------------------------------------------
-
+# calculate errors:
 S_error_s1 <- sweep(S_array_s1, MARGIN = c(1:2), 
                     STATS = S_true_s1,
                     FUN = "-", 
                     check.margin = TRUE)
-
-filled.contour(S_true_s1)
-filled.contour(S_array[,,1])
-
 
 S_error_s2 <- sweep(S_array_s2, MARGIN = c(1:2), 
                     STATS = S_true_s2,
@@ -286,26 +296,33 @@ S_error_unstruc_s2 <- sweep(S_array_unstruc_s2, MARGIN = c(1:2),
                             STATS = S_true_s2,
                             FUN = "-", check.margin = TRUE)
 
-ise_S_s1 <- apply(S_error_s1, c(3), function(x) {
-  sum(x^2)
-})
+# and ISEs from integrals using discrete approximation:
+ise_S_s1 <- apply(S_error_s1,
+                  MARGIN = c(3),
+                  FUN = function(x) {
+                    sum(x^2)
+                    })
 
-ise_S_s2 <- apply(S_error_s2, c(3), function(x) {
-  sum(x^2)
-})
+ise_S_s2 <- apply(S_error_s2,
+                  MARGIN = c(3),
+                  FUN = function(x) {
+                    sum(x^2)
+                    })
 
-ise_S_unstruc_s1 <- apply(S_error_unstruc_s1, c(3), function(x) {
-  sum(x^2)
-})
+ise_S_unstruc_s1 <- apply(S_error_unstruc_s1, 
+                          MARGIN = c(3),
+                          FUN = function(x) {
+                            sum(x^2)
+                            })
 
-ise_S_unstruc_s2 <- apply(S_error_unstruc_s2, c(3), function(x) {
-  sum(x^2)
-})
+ise_S_unstruc_s2 <- apply(S_error_unstruc_s2,
+                          MARGIN = c(3), 
+                          FUN = function(x) {
+                            sum(x^2)
+                            })
 
 
 
-
-# -------------------------------------------------------------------------
 
 cov_results_dt <- data.table(
   scenario = factor(rep(1:2, each = 1000)),
@@ -324,7 +341,7 @@ cov_results_dt <- data.table(
   )
 )
 
-
+## Re-shape for plotting in publiash-able figure -------------------------
 
 cov_results_dt_lng <- melt.data.table(
   cov_results_dt,
@@ -359,6 +376,7 @@ p3
 
 
 
+# Re-do previous figure to combine ----------------------------------------
 p2 <- ggplot(data = icc_plot_dt) +
   aes(fill = scenario, x= scenario, y = icc) +
   geom_boxplot() +
@@ -369,6 +387,7 @@ p2 <- ggplot(data = icc_plot_dt) +
        fill = "Scenario") +
   theme(plot.margin = margin(t = 10, b = 10, r = 30, l = 80))
 
+# use patchwork to combine:
 p1.5 <- p1/p3 # using `patchwork`
 (combined_plot <- ggarrange(plotlist = 
             list(
