@@ -1,0 +1,9 @@
+method,parameter,scenario,coverage,se
+wald,sexfemale,1,0.96,0.01
+wald,speed,1,0.95,0.01
+wald,sexfemale,2,0.95,0.01
+wald,speed,2,0.96,0.01
+boot,sexfemale,1,0.96,0.01
+boot,speed,1,0.94,0.01
+boot,sexfemale,2,0.95,0.01
+boot,speed,2,0.95,0.01
