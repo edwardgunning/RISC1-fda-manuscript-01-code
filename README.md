@@ -40,14 +40,24 @@ using functional data analysis’
     - :page_facing_up: [Function to extract an estimated heteroscedastic
       residual covariance matrix from an `nlme`
       object](code/functions/function-get-residual-covariance-matrix.R)
+    - :page_facing_up: [Function to calculate Monte Carlo Standard
+      Errors for Coverage](code/functions/binomial_se.R)
+    - :page_facing_up: [Tests Monte Carlo Standard Errors for
+      Coverage](code/functions/binomial_se_tests.R)
   - :open_file_folder: **simulation** – scripts to generate and perform
     the short simulation in the paper
-    - :open_file_folder: [1 - Fit a simple model and generate empirical
+    - :page_facing_up: [01 - Fit a simple model and generate empirical
       parameters](code/simulation/BFMM-paper-get-simulation-parameters.R)
-    - :open_file_folder: [2 - Generate Eigenfunctions for the
+    - :page_facing_up: [02 - Generate Eigenfunctions for the
       Simulation](code/simulation/BFMM-paper-generate-efuns-simulation.R)
-    - :open_file_folder: [3 - Functions to Generate
+    - :page_facing_up: [03 - Functions to Generate
       Data](code/simulation/BFMM-paper-generate-simulated-data.R)
+    - :page_facing_up: [04 - Code to Run and Save
+      Simulation](code/simulation/BFMM-paper-tidied-simulation.R)
+    - :page_facing_up: [05 - Assess Estimation and Plot
+      Results](code/simulation/BFMM-paper-simulation-result-plot.R)
+    - :page_facing_up: [06 - Assess Coverage and Tabulate
+      Results](code/simulation/BFMM-paper-simulation-coverage-tables.R)
 
 ## Timing Results:
 

@@ -88,7 +88,7 @@ apply(apply(cover_wald_sim_mat, c(2, 3), all)[,1:500], 1, mean)
 sim_dt <- data.table(
   rep = settings$rep,
   scenario = settings$scenario,
-  t(apply(cover_wald_sim_mat, c(2:3), all)),
+  t(apply(cover_wald_sim_mat, c(2:3), all)), # note all rather than mean = simultaneous coverage!
   t(apply(cover_boot_sim_mat, c(2:3), all))
 )
 
