@@ -65,3 +65,16 @@ It took **15.7 minutes** to run the bootstrap analysis using **2500
 bootstrap replicates** with computing shared across **8 cores** on a
 2019 MacBook Pro with a 2.4 GHz Quad-Core Intel Core i5 processer and 8
 GB of memory (code ran on 2023-02-07 15:54:28).
+
+## Reproducibility
+
+We have stored `.Random.seed` on each iteration of the simulation in a
+list called `simulation_seeds`. The seed can be set to produce any
+iteration by using the command (described
+[here](https://stackoverflow.com/questions/19614314/can-i-get-seed-somehow)):
+
+``` r
+# to set seed as it was on iteration i
+given_seed <- simulation_seeds[[i]]
+.Random.seed <- given_seed
+```

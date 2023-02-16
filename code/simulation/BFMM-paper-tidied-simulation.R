@@ -359,6 +359,7 @@ results_list <- list(
                   arg_vals = arg_vals,
                   time_stamp = timestamp(),
                   sessionInfo = sessionInfo(),
+                  seeds = simulation_seeds,
                   R.version = R.version),
   ranef = list(Q_array = Q_array,
                Q_array_unstruc = Q_array_unstruc,

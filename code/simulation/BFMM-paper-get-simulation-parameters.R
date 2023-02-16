@@ -13,6 +13,8 @@ library(lme4)       # CRAN v1.1-28
 # Load some helper functions for functional data manipulation: ------------
 source(file = here::here("code","functions","functions-helper-smoothing.R"))
 source(file = here::here("code","functions","BFMM-paper-helper-functions.R"))
+# And helper function for projecting mean function back onto the FPCs:
+source(here::here("code","functions","function-project-mean-onto-fpcs.R"))
 
 # Paths -------------------------------------------------------------------
 data_path <- here::here("data")
@@ -98,11 +100,23 @@ scores <- apply(bfpca$scores,
 
 mean_eval <- eval.fd(evalarg = 0:100, mean.fd(bfd_obj))
 mean_eval_vec <- c(mean_eval[,1,1], mean_eval[,1,2])
+mean_scores <- project_mean_onto_fpcs(pca.fd_obj = bfpca)
+mean_scores_vec <- apply(mean_scores,c(1,2),sum)[1, ]
 
 # Evaluate basis functions on a grid:
 phi <- eval.fd(evalarg = 0:100,
                fdobj = bfpca$harmonics)
 Phi <- rbind(phi[,,1], phi[,,2])
+
+scores_centred <- apply(bfpca$scores,
+                        MARGIN = c(1, 2),
+                        FUN = sum)
+
+scores_uncentred <- sweep(scores_centred,
+                          MARGIN = c(2), 
+                          STATS = mean_scores_vec, # add on mean vector to each row!
+                          FUN = "+",
+                          check.margin = TRUE)
 
 
 # Model for scores -----------------------------------------------
@@ -112,8 +126,8 @@ covariates_dt <- subject_side_coef_hip[, .(sex,
                                            speed_cent,
                                            subject_id = factor(subject_id))]
 
-colnames(scores) <- paste0("score_", seq_len(ncol(scores)))
-lme_dt <- cbind(covariates_dt, scores)
+colnames(scores_uncentred) <- paste0("score_", seq_len(ncol(scores_uncentred)))
+lme_dt <- cbind(covariates_dt, scores_uncentred)
 
 
 
@@ -138,10 +152,10 @@ q_vec <- lme_fit$q_vec
 s_vec <- lme_fit$s_vec
 
 
-# For simulation data, only take first ten inds to keep simulation start
+# For siulation data, only take first ten inds to keep simulation start
 # (hence subsetting [, 1:10])
 sim_data_list <- list(
-  B_empirical_scores = B[2:3, 1:10], # don't take intercept (2:3), work with mean-centered data
+  B_empirical_scores = B[, 1:10], # don't take intercept (2:3), work with mean-centered data
   Phi = Phi[, 1:10],
   arg_vals = 0:100,
   q_vec = q_vec[1:10],

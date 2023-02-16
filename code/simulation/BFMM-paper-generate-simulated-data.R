@@ -18,7 +18,7 @@ generate_data_scenario_1 <- function(N = 280, J = 2) {
   df$speed <- rep(covariate_speed, each = J)
   covariate_sex <- factor(ifelse(runif(N) > 0.5, "male", "female"), levels = c("male", "female"))
   df$sex <- rep(covariate_sex, each = J)
-  X <- model.matrix( ~ sex + speed, data = df)[, - 1] # don't need intercept
+  X <- model.matrix( ~ sex + speed, data = df) # don't need intercept
   Z <- model.matrix(~ subject_id - 1, data = df)
   
   # Functional Part
@@ -44,7 +44,7 @@ generate_data_scenario_2 <- function(N = 280, J = 2) {
   df$speed <- rep(covariate_speed, each = J)
   covariate_sex <- factor(ifelse(runif(N) > 0.5, "male", "female"), levels = c("male", "female")) # binary sex variable
   df$sex <- rep(covariate_sex, each = J)
-  X <- model.matrix( ~ sex + speed, data = df)[, - 1] # don't need intercept
+  X <- model.matrix( ~ sex + speed, data = df) # don't need intercept
   Z <- model.matrix(~ subject_id - 1, data = df)
   
   # Functional Part
