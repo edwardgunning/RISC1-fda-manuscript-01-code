@@ -27,7 +27,7 @@ ncores <- 7
 # Get ground truth fixed effects function ---------------------------------
 # (to compare with)
 fixef_true <- sim_data_list$B_empirical_scores %*% t(sim_data_list$Phi)
-rownames(fixef_true) <- c("sexfemale", "speed")
+rownames(fixef_true) <- c("(Intercept)", "sexfemale", "speed")
 
 # Set up objects to store simulation result: ------------------------------
 #  store simulation seeds for reproducbility (Morris et al., 2019)
@@ -41,7 +41,7 @@ cover_boot_sim_array <-
   fixef_array_freg <-
   cover_wald_pw_array <-
   cover_boot_pw_array <-
-  array(NA, dim = c(2 * length(arg_vals), 2, N_sim_total))
+  array(NA, dim = c(2 * length(arg_vals), 3, N_sim_total))
 
 # Name the objects to index by name of effect
 # (safer than indexing by number)
@@ -51,7 +51,7 @@ dimnames(fixef_array)[[2]] <-
   dimnames(cover_boot_pw_array)[[2]] <-
   colnames(cover_boot_sim_array) <-
   colnames(cover_wald_sim_array) <-
-  c("sexfemale", "speed")
+  c("(Intercept)", "sexfemale", "speed")
 
 # Arrays to store random effects and error covariances:
 Q_array <- 
@@ -121,10 +121,14 @@ for(i in seq_len(N_sim_total)) {
   freg_knee <- fRegress(y = y_fd_obj[,2], xfdlist = x_fd_list, betalist = beta_list)
   
   # store fixed effects (even though not of interest):
-  fixef_array_freg[1:101, 1 ,i] <- eval.fd(arg_vals, fdobj = freg_hip$betaestlist[[2]]$fd)
-  fixef_array_freg[1:101, 2 ,i] <- eval.fd(arg_vals, fdobj = freg_hip$betaestlist[[3]]$fd)
-  fixef_array_freg[102:202, 1 ,i] <- eval.fd(arg_vals, fdobj = freg_knee$betaestlist[[2]]$fd)
-  fixef_array_freg[102:202, 2 ,i] <- eval.fd(arg_vals, fdobj = freg_knee$betaestlist[[3]]$fd)
+  fixef_array_freg[1:101, "(Intercept)" ,i] <- eval.fd(arg_vals, fdobj = freg_hip$betaestlist[[1]]$fd)
+  fixef_array_freg[1:101, "sexfemale" ,i] <- eval.fd(arg_vals, fdobj = freg_hip$betaestlist[[2]]$fd)
+  fixef_array_freg[1:101, "speed" ,i] <- eval.fd(arg_vals, fdobj = freg_hip$betaestlist[[3]]$fd)
+  
+  fixef_array_freg[102:202, "(Intercept)" ,i] <- eval.fd(arg_vals, fdobj = freg_knee$betaestlist[[1]]$fd)
+  fixef_array_freg[102:202, "sexfemale" ,i] <- eval.fd(arg_vals, fdobj = freg_knee$betaestlist[[2]]$fd)
+  fixef_array_freg[102:202, "speed" ,i] <- eval.fd(arg_vals, fdobj = freg_knee$betaestlist[[3]]$fd)
+
   
   
   # calculate residuals (i.e., center data around fixed effects)
@@ -191,8 +195,8 @@ for(i in seq_len(N_sim_total)) {
   # Part (4): Extract and store estimates
   ###################################################
   # extract estimates:
-  fixef_mat_i <- lme_scores$fixef_mat[c("sexfemale", "speed"), ]
-  fixef_var_i <- lme_scores$fixef_var[c("sexfemale", "speed"), ]
+  fixef_mat_i <- lme_scores$fixef_mat[c("(Intercept)", "sexfemale", "speed"), ]
+  fixef_var_i <- lme_scores$fixef_var[c("(Intercept)", "sexfemale", "speed"), ]
   q_vec_i <- lme_scores$q_vec
   s_vec_i <- lme_scores$s_vec
   
@@ -214,7 +218,7 @@ for(i in seq_len(N_sim_total)) {
 
   # construct covariance functions of functional coefficients
   fixef_fun_covar <- lapply(
-    c(sexfemale = "sexfemale", speed ="speed"),
+    c(`(Intercept)` = "(Intercept)", sexfemale = "sexfemale", speed ="speed"),
     function(x) {Psi_hat %*% diag(fixef_var_i[x, ]) %*% t(Psi_hat)
       }
     )
@@ -223,6 +227,14 @@ for(i in seq_len(N_sim_total)) {
   fixef_fun_se <- t(sapply(fixef_fun_covar, function(x) {
     sqrt(diag(x))
   }))
+  
+  
+  wald_CI_int_sim <- mvn_sim(
+    coef_point_est = fixef_mat_i["(Intercept)",, drop = TRUE], 
+    coef_covar_mat = diag(fixef_var_i["(Intercept)",, drop = TRUE]), 
+    Psi_basis = Psi_hat, 
+    N_simulation_mvn = N_simulation_MVN,
+    coverage_level = coverage_level_nominal)
   
   # construct simultaneous CIs by simulation:
   wald_CI_sex_sim <- mvn_sim(
@@ -239,7 +251,20 @@ for(i in seq_len(N_sim_total)) {
     N_simulation_mvn = N_simulation_MVN,
     coverage_level = coverage_level_nominal)
   
-  # store pointwise and simultaenous CIs:
+
+    # store pointwise and simultaenous CIs:
+  
+  wald_CI_int <- list(
+    pw = list(
+      lower = fixef_fun_point["(Intercept)",, drop = TRUE] - 2 * fixef_fun_se["(Intercept)",, drop = TRUE],
+      upper = fixef_fun_point["(Intercept)",, drop = TRUE] + 2 * fixef_fun_se["(Intercept)",, drop = TRUE]
+    ),
+    sim = list(
+      lower = wald_CI_int_sim$lower,
+      upper = wald_CI_int_sim$upper
+    )
+  )
+  
   wald_CI_sex <- list(
     pw = list(
       lower = fixef_fun_point["sexfemale",, drop = TRUE] - 2 * fixef_fun_se["sexfemale",, drop = TRUE],
@@ -277,7 +302,7 @@ for(i in seq_len(N_sim_total)) {
                                 n_cores = ncores))["elapsed"]
   # Extract the coefficient samples from the bootstrap:
   fixef_coef_samples_boot <- lapply(
-    c(sexfemale = "sexfemale", speed ="speed"),
+    c(`(Intercept)` = "(Intercept)", sexfemale = "sexfemale", speed ="speed"),
     FUN = function(y) {
       t(sapply(boot_result, function(x) {
         x$fixef[y, ]
@@ -288,13 +313,13 @@ for(i in seq_len(N_sim_total)) {
   fixef_coef_covar_boot <- lapply(fixef_coef_samples_boot, var)
   # Combine with estimated bfpc basis to obtain bootstrap estimates
   # of the coefficient covariance functions:
-  fixef_fun_se_boot <- lapply(c(sexfemale = "sexfemale", speed ="speed"),
+  fixef_fun_se_boot <- lapply(c(`(Intercept)` = "(Intercept)", sexfemale = "sexfemale", speed ="speed"),
                               function(x) {
                                 sqrt(diag(Psi_hat %*% fixef_coef_covar_boot[[x]] %*% t(Psi_hat)))
                                 })
   # Again, cosntruct simultaneous bands by simulation from MVN
   # but this time, we use the bootstrap estimate of the coefficient covariance matrices
-  sim_cb_bootstrap <- lapply(X = c(sexfemale = "sexfemale", speed ="speed"),
+  sim_cb_bootstrap <- lapply(X = c(`(Intercept)` = "(Intercept)", sexfemale = "sexfemale", speed ="speed"),
                              FUN = function(x) {
     mvn_sim(coef_point_est = fixef_mat_i[x, , drop = TRUE],
             coef_covar_mat = fixef_coef_covar_boot[[x]],
@@ -303,9 +328,21 @@ for(i in seq_len(N_sim_total)) {
             coverage_level = coverage_level_nominal)
   })
   # extract results
+  boot_CI_int_sim <- sim_cb_bootstrap[["(Intercept)"]]
   boot_CI_sex_sim <- sim_cb_bootstrap[["sexfemale"]]
   boot_CI_speed_sim <- sim_cb_bootstrap[["speed"]]
   # and store results
+  boot_CI_int <- list(
+    pw = list(
+      lower = fixef_fun_point["(Intercept)",, drop = TRUE] - 2 * fixef_fun_se_boot[["(Intercept)"]],
+      upper = fixef_fun_point["(Intercept)",, drop = TRUE] + 2 * fixef_fun_se_boot[["(Intercept)"]]
+    ),
+    sim = list(
+      lower = boot_CI_int_sim$lower,
+      upper = boot_CI_int_sim$upper
+    )
+  )
+  
   boot_CI_sex <- list(
     pw = list(
       lower = fixef_fun_point["sexfemale",, drop = TRUE] - 2 * fixef_fun_se_boot[["sexfemale"]],
@@ -333,16 +370,20 @@ for(i in seq_len(N_sim_total)) {
   ###################################################
   
   # Store Pointwise Coverage of Pointwise Intervals:
+  cover_wald_pw_array[,"(Intercept)",i] <-(wald_CI_int$pw$lower < fixef_true["(Intercept)",]) & (fixef_true["(Intercept)",] < wald_CI_int$pw$upper)
   cover_wald_pw_array[,"sexfemale",i] <-(wald_CI_sex$pw$lower < fixef_true["sexfemale",]) & (fixef_true["sexfemale",] < wald_CI_sex$pw$upper)
   cover_wald_pw_array[,"speed",i] <-(wald_CI_speed$pw$lower < fixef_true["speed",]) & (fixef_true["speed",] < wald_CI_speed$pw$upper)
   
+  cover_boot_pw_array[,"(Intercept)",i] <-(boot_CI_int$pw$lower < fixef_true["(Intercept)",]) & (fixef_true["(Intercept)",] < boot_CI_int$pw$upper)
   cover_boot_pw_array[,"sexfemale",i] <-(boot_CI_sex$pw$lower < fixef_true["sexfemale",]) & (fixef_true["sexfemale",] < boot_CI_sex$pw$upper)
   cover_boot_pw_array[,"speed",i] <-(boot_CI_speed$pw$lower < fixef_true["speed",]) & (fixef_true["speed",] < boot_CI_speed$pw$upper)
 
   # Store Pointwise Coverage of Simultaneous Bands so that Simultaneous Coverage can be assessed later:
+  cover_wald_sim_array[,"(Intercept)",i] <- (wald_CI_int$sim$lower < fixef_true["(Intercept)",]) & (fixef_true["(Intercept)",] < wald_CI_int$sim$upper)
   cover_wald_sim_array[,"sexfemale",i] <- (wald_CI_sex$sim$lower < fixef_true["sexfemale",]) & (fixef_true["sexfemale",] < wald_CI_sex$sim$upper)
   cover_wald_sim_array[,"speed",i] <- (wald_CI_speed$sim$lower < fixef_true["speed",]) & (fixef_true["speed",] < wald_CI_speed$sim$upper)
   
+  cover_boot_sim_array[,"(Intercept)",i] <- (boot_CI_int$sim$lower < fixef_true["(Intercept)",]) & (fixef_true["(Intercept)",] < boot_CI_int$sim$upper)
   cover_boot_sim_array[,"sexfemale",i] <- (boot_CI_sex$sim$lower < fixef_true["sexfemale",]) & (fixef_true["sexfemale",] < boot_CI_sex$sim$upper)
   cover_boot_sim_array[,"speed",i] <- (boot_CI_speed$sim$lower < fixef_true["speed",]) & (fixef_true["speed",] < boot_CI_speed$sim$upper)
 }

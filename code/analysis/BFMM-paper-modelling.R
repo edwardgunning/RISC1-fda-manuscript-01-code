@@ -30,7 +30,7 @@ head(subject_side_data)
 
 
 # Extract FPC scores + check: ---------------------------------------------
-scores_uncentered <- basis_transformation_results$scores_uncentred
+scores <- basis_transformation_results$scores
 k_retain <- basis_transformation_results$k_retain
 stopifnot(ncol(scores_uncentered) == k_retain)
 
@@ -54,8 +54,8 @@ covariates_dt[, side_is_dominant := ifelse(side == dominance, "dominant", "non-d
 stopifnot(covariates_dt[, .(count_var = uniqueN(side_is_dominant)), by = subject_id][, all(count_var==2)])
 
 
-colnames(scores_uncentered) <- paste0("score_", seq_len(k_retain))
-lme_dt <- cbind(covariates_dt, scores_uncentered)
+colnames(scores) <- paste0("score_", seq_len(k_retain))
+lme_dt <- cbind(covariates_dt, scores)
 head(lme_dt)
 
 

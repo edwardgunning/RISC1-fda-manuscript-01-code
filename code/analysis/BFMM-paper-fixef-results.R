@@ -20,9 +20,11 @@ theme_gunning() # set theme
 theme_update(panel.grid.major = element_blank(),
              legend.key.size = unit(0.95,"line"))
 
+# rough guide for sizing of plot outputs:
+doc_width_cm <- 16
+doc_width_inches <- doc_width_cm *  0.3937
 
-
-# Path to save the ouputs of analysis: ------------------------------------
+# Path to save the outputs of analysis: -----------------------------------
 plots_path <- here::here("outputs", "figures")
 results_path <- here::here("outputs", "results")
 

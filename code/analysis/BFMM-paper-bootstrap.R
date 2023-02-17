@@ -28,6 +28,7 @@ lme_fit <- readRDS(file.path(results_path, "model-fit-results.rds"))
 # Extract things from fitted model:
 model_formula_fixef <- lme_fit$fixef_formula
 lme_dt <- lme_fit$lme_df
+mean_eval_vec <- basis_transformation_results$mean_eval_vec
 bfpca <- basis_transformation_results$bfpca_obj
 bfd_obj <- basis_transformation_results$bfd_obj
 k_retain <- basis_transformation_results$k_retain
@@ -139,7 +140,18 @@ parameter_results_df <- purrr::map_dfr(fixef_names, function(x) {
   )
 }, .id = "parameter")
 
+
 parameter_results_dt <- data.table(parameter_results_df)
+
+# add back mean on the grid of points!
+parameter_results_dt[parameter == "(Intercept)",
+                     `:=`(
+                       point_est = point_est + mean_eval_vec,
+                       sim_boot_lower = sim_boot_lower + mean_eval_vec,
+                       sim_boot_upper = sim_boot_upper + mean_eval_vec,
+                       sim_wald_lower = sim_wald_lower + mean_eval_vec,
+                       sim_wald_upper = sim_wald_upper + mean_eval_vec
+                     )]
 
 parameter_results_dt[
   , `:=`(
