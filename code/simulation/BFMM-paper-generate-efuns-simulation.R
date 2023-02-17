@@ -25,12 +25,14 @@
 # ------------------------------------------------------------------------#
 
 results_path <- here::here("outputs", "results")
+k <- readRDS(file.path(results_path, "BFMM-simulation-parameters.rds"))$k
+set.seed(1) # because sign in front of eignefunctions in each dimensoon can flip
 
 # Basis functions for U ---------------------------------------------------
 sim_bfundata_U <- funData::simMultiFunData(
   argvals = replicate(n = 2, expr = 0:100, simplify = FALSE), # domains of bivariate functional data.
   eFunType = "Fourier", # Fourier basis for level 1
-  M = 10, # Number of basis functions 
+  M = k, # Number of basis functions 
   N = 1, # NA because only taking basis functions
   eValType = "linear", # NA because only taking basis functions
   type = "split") # ('splitting' method, see Happ and Greven)
@@ -43,9 +45,10 @@ efuns_U <- rbind(efuns_U_hip, efuns_U_knee)
 
 
 # Basis functions for E: --------------------------------------------------
-sim_bfundata_E <- funData::simMultiFunData(argvals = replicate(n = 2,expr = 0:100,simplify = FALSE),
+set.seed(1996)
+sim_bfundata_E <- funData::simMultiFunData(argvals = replicate(n = 2, expr = 0:100, simplify = FALSE),
                                            eFunType = "Poly", # Orthogonal polynomial basis for level 2
-                                           M = 10,
+                                           M = k,
                                            N = 1,
                                            eValType = "linear",
                                            type = "split")

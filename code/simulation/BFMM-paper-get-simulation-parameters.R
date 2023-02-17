@@ -82,8 +82,8 @@ harm_fd_par <- fdPar(fdobj = bspl80, Lfdobj = int2Lfd(2), lambda = 0)
 bfpca <- pca.fd(fdobj = bfd_obj, nharm = 50, harmfdPar = harm_fd_par)
 
 
-# We want to retain enough fpcas s.t. > 99.99% of var is retained.
-k_retain <- min(which(cumsum(bfpca$varprop) > 0.9999))
+# We want to retain enough fpcas s.t. > 99 of var is retained to be used in simulation
+k_retain <- min(which(cumsum(bfpca$varprop) > 0.99))
 colours <- c(rep("darkgreen", k_retain), rep("red4", 50 - k_retain))
 
 # Re-run bfpca onlt retianing the specified number of fpcs.
@@ -100,23 +100,17 @@ scores <- apply(bfpca$scores,
 
 mean_eval <- eval.fd(evalarg = 0:100, mean.fd(bfd_obj))
 mean_eval_vec <- c(mean_eval[,1,1], mean_eval[,1,2])
-mean_scores <- project_mean_onto_fpcs(pca.fd_obj = bfpca)
-mean_scores_vec <- apply(mean_scores,c(1,2),sum)[1, ]
+
 
 # Evaluate basis functions on a grid:
 phi <- eval.fd(evalarg = 0:100,
                fdobj = bfpca$harmonics)
 Phi <- rbind(phi[,,1], phi[,,2])
 
-scores_centred <- apply(bfpca$scores,
+scores <- apply(bfpca$scores,
                         MARGIN = c(1, 2),
                         FUN = sum)
 
-scores_uncentred <- sweep(scores_centred,
-                          MARGIN = c(2), 
-                          STATS = mean_scores_vec, # add on mean vector to each row!
-                          FUN = "+",
-                          check.margin = TRUE)
 
 
 # Model for scores -----------------------------------------------
@@ -126,8 +120,8 @@ covariates_dt <- subject_side_coef_hip[, .(sex,
                                            speed_cent,
                                            subject_id = factor(subject_id))]
 
-colnames(scores_uncentred) <- paste0("score_", seq_len(ncol(scores_uncentred)))
-lme_dt <- cbind(covariates_dt, scores_uncentred)
+colnames(scores) <- paste0("score_", seq_len(ncol(scores)))
+lme_dt <- cbind(covariates_dt, scores)
 
 
 
@@ -147,19 +141,20 @@ B <- lme_fit$fixef_mat
 # Extract Random-Intercept Variances:
 q_vec <- lme_fit$q_vec
 
-
 # Extract Error Variances:
 s_vec <- lme_fit$s_vec
-
 
 # For siulation data, only take first ten inds to keep simulation start
 # (hence subsetting [, 1:10])
 sim_data_list <- list(
-  B_empirical_scores = B[, 1:10], # don't take intercept (2:3), work with mean-centered data
-  Phi = Phi[, 1:10],
+  k = k_retain,
+  mean_fd = bfpca$meanfd,
+  mean_eval_vec = mean_eval_vec,
+  B_empirical_scores = B, # don't take intercept (2:3), work with mean-centered data
+  Phi = Phi,
   arg_vals = 0:100,
-  q_vec = q_vec[1:10],
-  s_vec = s_vec[1:10],
+  q_vec = q_vec,
+  s_vec = s_vec,
   speed_sd = sd(unique(covariates_dt$speed_cent)) # standard deviation of speed variable used to generate
 )
 

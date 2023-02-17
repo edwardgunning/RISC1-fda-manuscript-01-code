@@ -26,12 +26,13 @@ generate_data_scenario_1 <- function(N = 280, J = 2) {
   E_star <- mvtnorm::rmvnorm(n = N * J, sigma = diag(sim_data_list$s_vec))
   # Scalar model
   Y_star <- X %*% sim_data_list$B_empirical_scores + Z %*% U_star + E_star
-  Y <- Y_star %*% t(sim_data_list$Phi) # multiply by basis
-  
+  Y_uc <- Y_star %*% t(sim_data_list$Phi) # multiply by basis
+  Y <- sweep(Y_uc, MARGIN = 2, STATS = sim_data_list$mean_eval_vec,FUN = "+", check.margin = TRUE) # add back on mean
   list(df = df,
        Y = Y,
        Y_star = Y_star)
  }
+
 
 
 generate_data_scenario_2 <- function(N = 280, J = 2) {
@@ -46,16 +47,19 @@ generate_data_scenario_2 <- function(N = 280, J = 2) {
   df$sex <- rep(covariate_sex, each = J)
   X <- model.matrix( ~ sex + speed, data = df) # don't need intercept
   Z <- model.matrix(~ subject_id - 1, data = df)
+
   
   # Functional Part
   U_star <- mvtnorm::rmvnorm(n = N, sigma = diag(sim_data_list$q_vec))
   E_star <- mvtnorm::rmvnorm(n = N * J, sigma = diag(sim_data_list$s_vec))
+
   # Scalar model
-  Y <- X %*% sim_data_list$B_empirical_scores %*% t(sim_data_list$Phi) + 
+  Y_uc <- X %*% sim_data_list$B_empirical_scores %*% t(sim_data_list$Phi) + 
     Z %*% U_star %*% t(efuns_s2$efuns_U) +
     E_star %*% t(efuns_s2$efuns_E)
-  
+  Y <- sweep(Y_uc, MARGIN = 2, STATS = sim_data_list$mean_eval_vec,FUN = "+", check.margin = TRUE) # add back on mean
   list(df = df,
        Y = Y)
 }
+
 

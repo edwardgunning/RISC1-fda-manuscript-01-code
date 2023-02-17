@@ -23,7 +23,7 @@ doc_width_cm <- 16
 doc_width_inches <- doc_width_cm *  0.3937
 
 # -------------------------------------------------------------------------
-set.seed(1996)
+set.seed(2023)
 sample_simdata_1 <- generate_data_scenario_1(N = 10, J = 2)
 sample_simdata_2 <- generate_data_scenario_2(N = 10, J = 2)
 
