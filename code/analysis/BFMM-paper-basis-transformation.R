@@ -4,7 +4,7 @@
 
 # Packages ----------------------------------------------------------------
 library(data.table) # CRAN v1.14.0
-library(ggplot2)    # CRAN v3.3.5
+library(ggplot2)    # CRAN v3.3.
 library(fda)        # CRAN v5.5.1
 library(GGally)     # CRAN v2.1.2
 library(tikzDevice) # CRAN v0.12.3.1
@@ -20,9 +20,6 @@ doc_width_inches <- doc_width_cm *  0.3937
 
 # Load some helper functions for functional data manipulation: ------------
 source(here::here("code", "functions", "functions-helper-smoothing.R"))
-
-# And helper function for projecting mean function back onto the FPCs:
-source(here::here("code","functions","function-project-mean-onto-fpcs.R"))
 
 # Path to save the ouputs of analysis: ------------------------------------
 plots_path <- here::here("outputs", "figures")
@@ -191,40 +188,26 @@ bfpca_eval_mat <- rbind(bfpca_eval_array[,,1], bfpca_eval_array[,,2])
 
 
 
-# Project mean back onto FPCs: --------------------------------------------
-mean_scores <- project_mean_onto_fpcs(pca.fd_obj = bfpca)
-mean_scores_vec <- apply(mean_scores,c(1,2),sum)[1, ]
-mean_tilde <- (matrix(mean_scores_vec,nrow = 1, ncol = k_retain) %*% t(bfpca_eval_mat))[1, ]
+# Store mean that was subtracted before FPCs: -----------------------------
 mean_eval_array <- eval.fd(0:100, bfpca$meanfd)  
-mean_eval_mat <- c(mean_eval_array[,,1], mean_eval_array[,,2])
+mean_eval_vec <- c(mean_eval_array[,,1], mean_eval_array[,,2])
 
+par(mfrow = c(1, 2))
+plot(mean_eval_vec[1:101], type = "l")
+plot(mean_eval_vec[102:202], type = "l")
 
-
-# Check mean is reconstructed ok: -----------------------------------------
-par(mfrow = c(1, 1))
-plot(mean_eval_mat, type = "l")
-lines(mean_tilde, type = "l", col = 2)
 
 
 
 # Add mean scores to matrix of scores: ------------------------------------
 # Think of this as ``un-centering" the FPCs:
-scores_centred <- apply(bfpca$scores,
+scores <- apply(bfpca$scores,
                 MARGIN = c(1, 2),
                 FUN = sum)
 
-scores_uncentred <- sweep(scores_centred,
-                        MARGIN = c(2), 
-                        STATS = mean_scores_vec, # add on mean vector to each row!
-                        FUN = "+",
-                        check.margin = TRUE)
-
-
-
 # Check reconstruction of indicidual functions: ---------------------------
-reconstructed_functions <- scores_uncentred %*% t(bfpca_eval_mat)
-true_functions <- rbind(eval.fd(0:100, subject_side_fd_hip),
-                     eval.fd(0:100, subject_side_fd_knee))
+reconstructed_functions <- sweep(scores %*% t(bfpca_eval_mat), MARGIN = 2, mean_eval_vec, FUN = "+", check.margin = TRUE)
+true_functions <- rbind(eval.fd(0:100, subject_side_fd_hip), eval.fd(0:100, subject_side_fd_knee))
 
 # Look at random sample for plot:
 set.seed(1) # so this sample will be the same every time!
@@ -275,7 +258,7 @@ plot_reconstruction_dt_lng[, rep:= factor(stringr::str_remove(rep, "rep"))]
       group = interaction(reconstruct, rep)) +
   facet_wrap( ~ dimension, scales = "free_y") +
   scale_alpha_manual(values = c(0.5,1)) +
-  geom_line(lwd = 0.75) +
+  geom_line(linewidth = 0.75) +
   labs(x = "Normalised Time ($\\%$ of Stride)", y = "Angle ($^{\\circ}$)",
        title = "\\textbf{(c)} Sample Reconstructions") +
   guides(colour ="none") +
@@ -302,10 +285,10 @@ basis_transform_results <- list(
   coef_dts = list(subject_side_coef_hip, subject_side_coef_knee),
   bfd_obj = bfd_obj,
   bfpca_obj = bfpca,
-  scores_centred = scores_centred,
+  mean_eval_vec = mean_eval_vec,
+  scores = scores,
   k_retain = k_retain,
-  var_cutoff = var_cutoff,
-  scores_uncentred = scores_uncentred
+  var_cutoff = var_cutoff
 )
 
 saveRDS(object = basis_transform_results,
