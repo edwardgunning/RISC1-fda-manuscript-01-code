@@ -5,7 +5,6 @@ source(here::here("code", "simulation", "BFMM-paper-generate-simulated-data.R"))
 source(file.path(functions_path, "BFMM-paper-simulation-fit-functions.R"))
 source(file.path(functions_path, "BFMM-paper-helper-functions.R"))
 source(file.path(functions_path, "functions-unstructured-covariance.R"))
-source(file.path(functions_path,  "function-project-mean-onto-fpcs.R"))
 
 # Set random seed for reproducibility: ------------------------------------
 set.seed(1996)
@@ -28,7 +27,8 @@ ncores <- 7
 # (to compare with)
 fixef_true <- sim_data_list$B_empirical_scores %*% t(sim_data_list$Phi)
 rownames(fixef_true) <- c("(Intercept)", "sexfemale", "speed")
-
+fixef_true["(Intercept)",] <- fixef_true["(Intercept)",] + sim_data_list$mean_eval_vec
+icc_true <- sum(sim_data_list$q_vec) / sum(sim_data_list$q_vec, sim_data_list$s_vec)
 # Set up objects to store simulation result: ------------------------------
 #  store simulation seeds for reproducbility (Morris et al., 2019)
 simulation_seeds <- vector("list", length = N_sim_total) 
@@ -66,7 +66,7 @@ time_boot <- # time it takes to do bootstrap
   k_retain_vec <- # number of fpcs retained
   vector(mode = "integer", length = N_sim_total)
 
-
+icc_coverage_quantile <- icc_coverage_normal <- vector(mode = "numeric", length = N_sim_total)
 
 # ------------------------------------------------------------------------#
 # START SIMULATION
@@ -162,26 +162,23 @@ for(i in seq_len(N_sim_total)) {
                       argvals = arg_vals, 
                       pc_var_cutoff = pc_var)
   
+  
   # extract results of bfpca:
   k_retain_i <- k_retain_vec[i] <- bfpca_i$k_retain
   Psi_hat <- bfpca_i$Psi_hat
-  scores_i <- bfpca_i$scores
   
-  # uncenter the bfpc scores:
-  mean_scores <- project_mean_onto_fpcs(pca.fd_obj = bfpca_i$bfpca)
-  mean_scores_vec <- apply(mean_scores,c(1,2),sum)[1, ]
-  scores_centred <- apply(scores_i,
-                          MARGIN = c(1, 2),
-                          FUN = sum)
-  scores_uncentered <- sweep(scores_centred,
-                            MARGIN = c(2), 
-                            STATS = mean_scores_vec, # add on mean vector to each row!
-                            FUN = "+",
-                            check.margin = TRUE)
-  colnames(scores_uncentered) <- paste0("score_", seq_len(bfpca_i$k_retain))
+  mean_eval_array_i <- eval.fd(0:100, bfpca_i$bfpca$meanfd)
+  mean_eval_vec_i <- c(mean_eval_array_i[,,1], mean_eval_array_i[,,2])
+  
+  scores_i <- apply(bfpca_i$scores,
+                    MARGIN = c(1, 2),
+                    FUN = sum)
+  
+
+  colnames(scores_i) <- paste0("score_", seq_len(bfpca_i$k_retain))
   
   # create data frame of covariates and scores:
-  lme_df_i <- cbind(sim_data_i$df, scores_uncentered)
+  lme_df_i <- cbind(sim_data_i$df, scores_i)
   
   # fit linear mixed effects model to each score independently
   lme_scores <- fit_lme_to_scores(lme_df = lme_df_i,
@@ -202,6 +199,7 @@ for(i in seq_len(N_sim_total)) {
   
   # store estimates:
   fixef_fun_point <- fixef_mat_i %*% t(Psi_hat) # Point Estimate
+  fixef_fun_point["(Intercept)", ] <-  fixef_fun_point["(Intercept)", ] + mean_eval_vec_i
   fixef_array[,,i] <- t(fixef_fun_point) # Fixed Effects
   Q_array[,,i] <- Psi_hat %*% diag(q_vec_i) %*% t(Psi_hat) # RE Covariance
   S_array[,,i] <- Psi_hat %*% diag(s_vec_i) %*% t(Psi_hat) # Error Covariance
@@ -260,8 +258,8 @@ for(i in seq_len(N_sim_total)) {
       upper = fixef_fun_point["(Intercept)",, drop = TRUE] + 2 * fixef_fun_se["(Intercept)",, drop = TRUE]
     ),
     sim = list(
-      lower = wald_CI_int_sim$lower,
-      upper = wald_CI_int_sim$upper
+      lower =  mean_eval_vec_i + wald_CI_int_sim$lower, # need to add back on mean
+      upper =  mean_eval_vec_i + wald_CI_int_sim$upper
     )
   )
   
@@ -338,8 +336,8 @@ for(i in seq_len(N_sim_total)) {
       upper = fixef_fun_point["(Intercept)",, drop = TRUE] + 2 * fixef_fun_se_boot[["(Intercept)"]]
     ),
     sim = list(
-      lower = boot_CI_int_sim$lower,
-      upper = boot_CI_int_sim$upper
+      lower =  mean_eval_vec_i + boot_CI_int_sim$lower, # need to add back on mean
+      upper =  mean_eval_vec_i + boot_CI_int_sim$upper
     )
   )
   
@@ -386,7 +384,23 @@ for(i in seq_len(N_sim_total)) {
   cover_boot_sim_array[,"(Intercept)",i] <- (boot_CI_int$sim$lower < fixef_true["(Intercept)",]) & (fixef_true["(Intercept)",] < boot_CI_int$sim$upper)
   cover_boot_sim_array[,"sexfemale",i] <- (boot_CI_sex$sim$lower < fixef_true["sexfemale",]) & (fixef_true["sexfemale",] < boot_CI_sex$sim$upper)
   cover_boot_sim_array[,"speed",i] <- (boot_CI_speed$sim$lower < fixef_true["speed",]) & (fixef_true["speed",] < boot_CI_speed$sim$upper)
-}
+
+  ###################################################
+  # Part (7): Bootstrap Interval for ICC:
+  ###################################################
+  boot_icc_i <- sapply(boot_result, FUN = function(x) {
+    sum(x$q_vec) / sum(x$q_vec, x$s_vec)
+  })
+  
+  icc_CI_boot_quantile <- quantile(boot_icc_i, probs = c(0.025, 0.975))
+  icc_coverage_quantile[i] <- ((icc_true > icc_CI_boot_quantile[1]) & (icc_true < icc_CI_boot_quantile[2]))
+  
+  icc_SE_boot <- sd(boot_icc_i)
+  icc_CI_boot_normal <- mv_functional_icc_vec[i] + c(-2, 2) * icc_SE_boot
+  icc_coverage_normal[i] <- ((icc_true > icc_CI_boot_normal[1]) & (icc_true < icc_CI_boot_normal[2]))
+  
+  
+  }
 # ------------------------------------------------------------------------#
 # END SIMULATION
 # ------------------------------------------------------------------------#
@@ -413,7 +427,7 @@ results_list <- list(
                   cover_wald_sim_array = cover_wald_sim_array),
   truth = list(fixef_true = fixef_true,
                q_vec = sim_data_list$q_vec,
-               s_vec = sim_data_list$s_vec) # add q and s?
+               s_vec = sim_data_list$s_vec)
   )
 
 

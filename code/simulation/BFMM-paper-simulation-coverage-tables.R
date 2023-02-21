@@ -36,14 +36,16 @@ pw_dt <- data.table(
   t(apply(cover_boot_pw_array, 2:3, mean))
 )
 
-names(pw_dt)[3:4] <- paste0("wald_", names(pw_dt)[3:4])
-names(pw_dt)[5:6] <- paste0("boot_", names(pw_dt)[5:6])
+names(pw_dt)[3:5] <- paste0("wald_", names(pw_dt)[3:5])
+names(pw_dt)[6:8] <- paste0("boot_", names(pw_dt)[6:8])
 
 # Reshape
 pw_dt_lng <- melt.data.table(data = pw_dt,
                              id.vars = c("rep", "scenario"), 
-                             measure.vars = c("wald_sexfemale", 
+                             measure.vars = c("wald_(Intercept)",
+                                              "wald_sexfemale", 
                                               "wald_speed",
+                                              "boot_(Intercept)",
                                               "boot_sexfemale", 
                                               "boot_speed"),
                              variable.name = "method", 
@@ -53,8 +55,14 @@ pw_dt_lng <- melt.data.table(data = pw_dt,
                              verbose = TRUE
                              )
 
+pw_dt_lng[,
+  parameter := fcase(
+    stringr::str_detect(string = method, pattern =  "sexfemale"), "sexfemale",
+    stringr::str_detect(string = method, pattern =  "speed"), "speed",
+    stringr::str_detect(string = method, pattern =  "(Intercept)"), "(Intercept)")
+]
 
-pw_dt_lng[, parameter := fifelse(stringr::str_detect(string = method, pattern =  "sexfemale"), yes = "sexfemale", no = "speed")]
+
 pw_dt_lng[, method := fifelse(stringr::str_detect(string = method, pattern =  "wald"), yes = "wald", no = "boot")]
 
 # Calculate average coverage:
@@ -92,13 +100,15 @@ sim_dt <- data.table(
   t(apply(cover_boot_sim_mat, c(2:3), all))
 )
 
-names(sim_dt)[3:4] <- paste0("wald_", names(sim_dt)[3:4])
-names(sim_dt)[5:6] <- paste0("boot_", names(sim_dt)[5:6])
+names(sim_dt)[3:5] <- paste0("wald_", names(sim_dt)[3:5])
+names(sim_dt)[6:8] <- paste0("boot_", names(sim_dt)[6:8])
 sim_dt_lng <- melt.data.table(data = sim_dt,
                              id.vars = c("rep", "scenario"), 
-                             measure.vars = c("wald_sexfemale",
-                                              "wald_speed", 
-                                              "boot_sexfemale",
+                             measure.vars = c("wald_(Intercept)",
+                                              "wald_sexfemale", 
+                                              "wald_speed",
+                                              "boot_(Intercept)",
+                                              "boot_sexfemale", 
                                               "boot_speed"),
                              variable.name = "method", 
                              value.name = "covered",
@@ -106,7 +116,10 @@ sim_dt_lng <- melt.data.table(data = sim_dt,
                              value.factor = FALSE,
                              verbose = TRUE
 )
-sim_dt_lng[, parameter := fifelse(stringr::str_detect(string = method, pattern =  "sexfemale"), yes = "sexfemale", no = "speed")]
+sim_dt_lng[, parameter := fcase(
+  stringr::str_detect(string = method, pattern =  "sexfemale"), "sexfemale",
+  stringr::str_detect(string = method, pattern =  "speed"), "speed",
+  stringr::str_detect(string = method, pattern =  "(Intercept)"), "(Intercept)")]
 sim_dt_lng[, method := fifelse(stringr::str_detect(string = method, pattern =  "wald"), yes = "wald", no = "boot")]
 
 # calculate average coverage
@@ -123,6 +136,7 @@ sim_summary_round <- sim_summary[, .(method,
 setorderv(sim_summary_round, c("method", "scenario", "parameter"))
 
 sim_summary_round
+
 # save:
 fwrite(x = sim_summary_round,
        file = file.path(results_path, "BFMM-paper-coverage_sim.csv"))
