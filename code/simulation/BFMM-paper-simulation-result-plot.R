@@ -129,9 +129,9 @@ plot_ise_beta_dt_lng <- melt.data.table(
 
 plot_ise_beta_dt_lng[, param_name := 
                        fcase(
-                         parameter == "(Intercept)", "$\\boldsymbol{\\beta}(t)_0 (t)$",
-                         parameter == "sexfemale", "$\\boldsymbol{\\beta}(t)_1 (t)$",
-                         parameter == "speed", "$\\boldsymbol{\\beta}(t)_2 (t)$"
+                         parameter == "(Intercept)", "$\\boldsymbol{\\beta}_0(t)$",
+                         parameter == "sexfemale", "$\\boldsymbol{\\beta}_1 (t)$",
+                         parameter == "speed", "$\\boldsymbol{\\beta}_2 (t)$"
                        )]
 
 p1 <- ggplot(data = plot_ise_beta_dt_lng) +
