@@ -2,7 +2,6 @@
 library(ggplot2)    # CRAN v3.3.5
 library(data.table) # CRAN v1.14.2
 library(tikzDevice) # CRAN v0.12.3.1
-library(patchwork)  # CRAN v1.1.1
 library(ggpubr)     # CRAN v0.4.0
 
 # File paths: -------------------------------------------------------------
@@ -398,7 +397,7 @@ p3 <- ggplot(data = cov_results_dt_lng) +
        title = "Covariance Functions",
        x = "Scenario",
        fill = "Scenario") +
-  theme(legend.position = "none", plot.margin = margin(l = 12, r =0.1))
+  theme(legend.position = "none", plot.margin = margin(l = 12, r =0.1, b = 5))
 p3
 
 
@@ -412,11 +411,12 @@ p2 <- ggplot(data = icc_plot_dt) +
        title = "Intraclass Correlation Coefficient",
        x = "Scenario",
        fill = "Scenario") +
-  theme(legend.position = "none")
+  theme(legend.position = "none", 
+        plot.title = element_text(margin = margin(b = 6, t = -5)))
 
 p2
 
-# use patchwork to combine:
+# combine plots 2 and 3:
 p2.5 <- ggarrange(p3, p2, nrow = 1, ncol = 2, widths = c(0.675, 0.325)) # using `patchwork`
 
 
