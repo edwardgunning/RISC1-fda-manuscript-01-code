@@ -21,8 +21,6 @@ plots_path <- here::here("outputs", "figures")
 source(file.path(functions_path, "binomial_se.R"))
 source(file.path(functions_path, "theme_gunning.R"))
 
-
-
 # Read in Simulation Results ----------------------------------------------
 results_list <- readRDS(
   file.path(results_path, "BFMM-tidied-simulation-results.rds")

@@ -20,7 +20,10 @@ source(file.path(functions_path, "theme_gunning.R"))
 # Tweak some settings on plot: --------------------------------------------
 theme_gunning()
 theme_update(legend.title = element_text(size = 9, hjust = 0.5))
-
+options(tikzLatexPackages = c(getOption( "tikzLatexPackages" ),"\\usepackage{amsfonts}"))
+options(tikzLatexPackages = c(getOption( "tikzLatexPackages" ),"\\usepackage{amsmath}"))
+options(tikzLatexPackages = c(getOption( "tikzLatexPackages" ),"\\usepackage{amssymb}"))
+#          
 
 # Rough guide for plot size: ----------------------------------------------
 doc_width_cm <- 16
@@ -53,8 +56,12 @@ par(mfrow = c(2, 1))
 matplot(fixef_array_s1[,2,],type = "l", col = "grey")
 matplot(fixef_array_s2[,2,],type = "l", col = "grey")
 
+par(mfrow = c(2, 1))
+matplot(fixef_array_s1[,3,],type = "l", col = "grey")
+matplot(fixef_array_s2[,3,],type = "l", col = "grey")
+
 # Not much difference in the scenarios. Different sampling variation 
-#vin the betas due to different covariance structures
+# in the betas due to different covariance structures
 
 
 ## Look at estimation error -----------------------------------------------
@@ -73,11 +80,22 @@ fixef_error_s2 <- sweep(x = fixef_array_s2,
 # Rough plots:
 par(mfrow = c(2, 1))
 matplot(fixef_error_s1[,1,],type = "l", col = "grey")
+title("Scenario 1")
 matplot(fixef_error_s2[,1,],type = "l", col = "grey")
+title("Scenario 2")
 
 par(mfrow = c(2, 1))
 matplot(fixef_error_s1[,2,],type = "l", col = "grey")
+title("Scenario 1")
 matplot(fixef_error_s2[,2,],type = "l", col = "grey")
+title("Scenario 2")
+
+
+par(mfrow = c(2, 1))
+matplot(fixef_error_s1[,3,],type = "l", col = "grey")
+title("Scenario 1")
+matplot(fixef_error_s2[,3,],type = "l", col = "grey")
+title("Scenario 2")
 
 
 
@@ -103,7 +121,7 @@ plot_ise_beta_dt <- data.table(
 
 plot_ise_beta_dt_lng <- melt.data.table(
   plot_ise_beta_dt, id.vars = c("scenario"), 
-  measure.vars = c("sexfemale", "speed"), 
+  measure.vars = c("(Intercept)", "sexfemale", "speed"), 
   variable.name = "parameter",
   value.name = "ise",
   variable.factor = FALSE, 
@@ -111,13 +129,15 @@ plot_ise_beta_dt_lng <- melt.data.table(
   verbose = TRUE)
 
 plot_ise_beta_dt_lng[, param_name := 
-                       fifelse(test = parameter == "sexfemale",
-                               "$\\beta_1 (t)$",
-                               "$\\beta_2 (t)$")]
+                       fcase(
+                         parameter == "(Intercept)", "$\\boldsymbol{\\beta}(t)_0 (t)$",
+                         parameter == "sexfemale", "$\\boldsymbol{\\beta}(t)_1 (t)$",
+                         parameter == "speed", "$\\boldsymbol{\\beta}(t)_2 (t)$"
+                       )]
 
 p1 <- ggplot(data = plot_ise_beta_dt_lng) +
   aes(fill = scenario, x = scenario, y = ise) +
-  facet_wrap(~ param_name, nrow = 1, ncol = 2, scales = "free_y") +
+  facet_wrap(~ param_name, nrow = 1, ncol = 3, scales = "free_y") +
   geom_boxplot() +
   labs(x = "Scenario",
        title = "Fixed Effects",
@@ -131,6 +151,7 @@ p1
 ## Look at bias -----------------------------------------------------------
 # again, quick and dirty, we used a near-lossless transformation so this
 # should be small in all cases:
+
 bias_s1 <- apply(fixef_array_s1, c(1,2), mean) - t(fixef_mat_true)
 
 bias_s2 <- apply(fixef_array_s2, c(1,2), mean) - t(fixef_mat_true)
@@ -149,6 +170,13 @@ plot(bias_s1[,2]^2, col = 1, type = "l",
        bias_s2[,2]^2
      ))
 lines(bias_s2[,2]^2, col = 2)
+
+plot(bias_s1[,3]^2, col = 1, type = "l", 
+     ylim = range(
+       bias_s1[,3]^2,
+       bias_s2[,3]^2
+     ))
+lines(bias_s2[,3]^2, col = 2)
 dev.off() # close plotting window
 # bias is small in both cases
 
@@ -176,8 +204,7 @@ p2 <- ggplot(data = icc_plot_dt) +
   labs(y = "Estimated ICC",
        title = "Intraclass Correlation Coefficient",
        x = "Scenario",
-       fill = "Scenario") +
-  theme(plot.margin = margin(t = 10, b = 10, r = 50, l = 75))
+       fill = "Scenario")
 
 p2
 
@@ -371,7 +398,7 @@ p3 <- ggplot(data = cov_results_dt_lng) +
        title = "Covariance Functions",
        x = "Scenario",
        fill = "Scenario") +
-  theme(legend.position = "none")
+  theme(legend.position = "none", plot.margin = margin(l = 12, r =0.1))
 p3
 
 
@@ -385,23 +412,26 @@ p2 <- ggplot(data = icc_plot_dt) +
        title = "Intraclass Correlation Coefficient",
        x = "Scenario",
        fill = "Scenario") +
-  theme(plot.margin = margin(t = 10, b = 10, r = 30, l = 80))
+  theme(legend.position = "none")
+
+p2
 
 # use patchwork to combine:
-p1.5 <- p1/p3 # using `patchwork`
+p2.5 <- ggarrange(p3, p2, nrow = 1, ncol = 2, widths = c(0.675, 0.325)) # using `patchwork`
+
+
+
 (combined_plot <- ggarrange(plotlist = 
             list(
-              p1.5, p2
-            ),
-          ncol = 1, heights = c(0.66, 0.33),
-          nrow = 2))
+              p1, p2.5
+            ), ncol = 1, nrow = 2))
 
 
 
 
 tikz(file.path(plots_path, "simulation-results-plot.tex"),
-     width = 0.8 * doc_width_inches, 
-     height = 1.5 * (0.8 * doc_width_inches))
+     width = 1.5 * doc_width_inches, 
+     height = 1 * doc_width_inches)
 print(combined_plot)
 dev.off()
 
