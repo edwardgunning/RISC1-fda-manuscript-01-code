@@ -11,21 +11,32 @@ library(ggpubr)     # CRAN v0.4.0
 library(tikzDevice) # CRAN v0.12.3.1
 
 
+
 # -------------------------------------------------------------------------
 # File paths: -------------------------------------------------------------
 functions_path <- here::here("code", "functions")
 results_path <- here::here("outputs", "results")
 plots_path <- here::here("outputs", "figures")
 
+
 # Source scripts: ---------------------------------------------------------
 source(file.path(functions_path, "binomial_se.R"))
 source(file.path(functions_path, "theme_gunning.R"))
+theme_gunning()
+# Set theme for plot: -----------------------------------------------------
+theme_update(legend.title = element_text(size = 9, hjust = 0.5, face = "bold"),
+             plot.title = element_text(hjust = 0.5, size = 11, face = "bold"))
+
+
+options(tikzLatexPackages = c(getOption( "tikzLatexPackages" ),"\\usepackage{amsfonts}"))
+options(tikzLatexPackages = c(getOption( "tikzLatexPackages" ),"\\usepackage{amsmath}"))
+options(tikzLatexPackages = c(getOption( "tikzLatexPackages" ),"\\usepackage{amssymb}"))
+#     
 
 # Read in Simulation Results ----------------------------------------------
 results_list <- readRDS(
   file.path(results_path, "BFMM-tidied-simulation-results.rds")
 )
-
 
 # Extract Coverage Results: -----------------------------------------------
 coverage_results <- results_list$coverage
@@ -79,24 +90,12 @@ coverage_plot_dt_lng[, `:=`(
 ylim_range <- range(coverage_plot_dt_lng[, .(upper, lower)])
 coverage_plot_dt_lng[, param_name := 
                        fcase(
-                         parameter == "(Intercept)", "$\\beta_0 (t)$",
-                         parameter == "sexfemale", "$\\beta_1 (t)$",
-                         parameter == "speed", "$\\beta_2 (t)$"
+                         parameter == "(Intercept)", "$\\boldsymbol{\\beta}_0 (t)$",
+                         parameter == "sexfemale", "$\\boldsymbol{\\beta}_1 (t)$",
+                         parameter == "speed", "$\\boldsymbol{\\beta}_2 (t)$"
                        )]
 coverage_plot_dt_lng[, dim := stringr::str_remove(dim, "dim_")]
 coverage_plot_dt_lng[, dim := paste("Dimension", dim)]
-
-
-# Set theme for plot: -----------------------------------------------------
-theme_set(theme_bw())
-theme_update(strip.text = element_text(size = 9),
-             text = element_text(size = 9),
-             panel.grid.minor = element_blank(),
-             axis.title = element_text(size = 9),
-             legend.text = element_text(size = 9, hjust = 0.5),
-             legend.title = element_text(size = 9, hjust = 0.5, face = "bold"),
-             plot.title = element_text(hjust = 0.5, size = 11, face = "bold"))
-
 
 # Plot --------------------------------------------------------------------
 s1 <- ggplot(data = coverage_plot_dt_lng[scenario == 1]) +
@@ -145,7 +144,7 @@ doc_width_cm <- 16
 doc_width_inches <- doc_width_cm *  0.3937
 
 tikz(file.path(plots_path, "simulation-coverage-plot.tex"),
-     width = doc_width_inches, 
+     width = (3/2) * doc_width_inches, 
      height = (0.65 * doc_width_inches))
 print(coverage_plot)
 dev.off()
