@@ -41,8 +41,8 @@ using functional data analysis’
       residual covariance matrix from an `nlme`
       object](code/functions/function-get-residual-covariance-matrix.R)
     - :page_facing_up: [Function to calculate Monte Carlo Standard
-      Errors for Coverage](code/functions/binomial_se.R)
-    - :page_facing_up: [Tests Monte Carlo Standard Errors for
+      Errors (SEs) for Coverage](code/functions/binomial_se.R)
+    - :page_facing_up: [Tests Monte Carlo SEs for
       Coverage](code/functions/binomial_se_tests.R)
   - :open_file_folder: **simulation** – scripts to generate and perform
     the short simulation in the paper
@@ -61,10 +61,10 @@ using functional data analysis’
 
 ## Timing Results:
 
-It took **15.7 minutes** to run the bootstrap analysis using **2500
+It took **15.32 minutes** to run the bootstrap analysis using **2500
 bootstrap replicates** with computing shared across **8 cores** on a
 2019 MacBook Pro with a 2.4 GHz Quad-Core Intel Core i5 processer and 8
-GB of memory (code ran on 2023-02-07 15:54:28).
+GB of memory (code ran on 2023-02-17 13:42:16).
 
 ## Reproducibility
 

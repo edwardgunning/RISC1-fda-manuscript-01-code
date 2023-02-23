@@ -26,7 +26,7 @@
 
 results_path <- here::here("outputs", "results")
 k <- readRDS(file.path(results_path, "BFMM-simulation-parameters.rds"))$k
-set.seed(1) # because sign in front of eignefunctions in each dimensoon can flip
+set.seed(2) # because sign in front of eignefunctions in each dimensoon can flip
 
 # Basis functions for U ---------------------------------------------------
 sim_bfundata_U <- funData::simMultiFunData(
@@ -41,7 +41,7 @@ sim_bfundata_U <- funData::simMultiFunData(
 efuns_fourier <- sim_bfundata_U$trueFuns
 efuns_U_hip <- fda::eval.fd(0:100, funData::funData2fd(efuns_fourier[[1]]))
 efuns_U_knee <- fda::eval.fd(0:100, funData::funData2fd(efuns_fourier[[2]]))
-efuns_U <- rbind(efuns_U_hip, efuns_U_knee)
+efuns_U <-  -1 * rbind(efuns_U_hip, efuns_U_knee) # so consistent with initial sim
 
 
 # Basis functions for E: --------------------------------------------------

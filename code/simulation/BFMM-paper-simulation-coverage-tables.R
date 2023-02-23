@@ -141,3 +141,18 @@ sim_summary_round
 fwrite(x = sim_summary_round,
        file = file.path(results_path, "BFMM-paper-coverage_sim.csv"))
 
+
+
+# Coverage for ICC: -------------------------------------------------------
+
+print(paste0("Percentile Interval Coverage ", 
+             100 * mean(results_list$ranef$icc_coverage_quantile), 
+             "%"))
+# "Percentile Interval Coverage 94.1%"
+
+print(paste0("Normal Interval Coverage ", 
+             100 * mean(results_list$ranef$icc_coverage_normal), 
+             "%"))
+
+
+

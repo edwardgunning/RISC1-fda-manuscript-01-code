@@ -1,5 +1,5 @@
 method,scenario,min,max
 Wald,1,0.92,0.98
 Bootstrap,1,0.92,0.98
-Wald,2,0.85,0.99
-Bootstrap,2,0.93,0.97
+Wald,2,0.89,0.99
+Bootstrap,2,0.92,0.97

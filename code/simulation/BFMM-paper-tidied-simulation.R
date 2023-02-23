@@ -420,12 +420,15 @@ results_list <- list(
                Q_array_unstruc = Q_array_unstruc,
                S_array = S_array,
                S_array_unstruc = S_array_unstruc,
-               mv_functional_icc_vec = mv_functional_icc_vec),
+               mv_functional_icc_vec = mv_functional_icc_vec,
+               icc_coverage_quantile = icc_coverage_quantile,
+               icc_coverage_normal = icc_coverage_normal),
   coverage = list(cover_boot_pw_array = cover_boot_pw_array,
                   cover_boot_sim_array = cover_boot_sim_array,
                   cover_wald_pw_array = cover_wald_pw_array,
                   cover_wald_sim_array = cover_wald_sim_array),
   truth = list(fixef_true = fixef_true,
+               icc = icc_true,
                q_vec = sim_data_list$q_vec,
                s_vec = sim_data_list$s_vec)
   )
