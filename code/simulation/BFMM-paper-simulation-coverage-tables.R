@@ -145,14 +145,20 @@ fwrite(x = sim_summary_round,
 
 # Coverage for ICC: -------------------------------------------------------
 
-print(paste0("Percentile Interval Coverage ", 
-             100 * mean(results_list$ranef$icc_coverage_quantile), 
-             "%"))
-# "Percentile Interval Coverage 94.1%"
-
-print(paste0("Normal Interval Coverage ", 
-             100 * mean(results_list$ranef$icc_coverage_normal), 
-             "%"))
 
 
+mean(results_list$ranef$icc_coverage_quantile[settings$scenario == 1])
+mean(results_list$ranef$icc_coverage_normal[settings$scenario == 1])
+
+mean(results_list$ranef$icc_coverage_quantile[settings$scenario == 2])
+mean(results_list$ranef$icc_coverage_normal[settings$scenario == 2])
+
+icc_coverage <- data.table(scenario = c(1, 2),
+           quantile = c(mean(results_list$ranef$icc_coverage_quantile[settings$scenario == 1]),
+                        mean(results_list$ranef$icc_coverage_quantile[settings$scenario == 2])),
+           normal = c(mean(results_list$ranef$icc_coverage_normal[settings$scenario == 1]),
+                      mean(results_list$ranef$icc_coverage_normal[settings$scenario == 2])))
+
+fwrite(x = icc_coverage,
+       file = file.path(results_path, "BFMM-paper-coverage_icc.csv"))
 
