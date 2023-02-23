@@ -7,17 +7,19 @@ using functional data analysis’
 - :open_file_folder: **code**
   - :open_file_folder: **analysis** – scripts used to perform the data
     analysis.
-    - :page_facing_up: [01 - Basis
+    - :page_facing_up: [01 - Exploratory Plot for
+      Introduction](code/analysis/BFMM-paper-basis-transformation.R)
+    - :page_facing_up: [02 - Basis
       Transformation](code/analysis/BFMM-paper-basis-transformation.R)
-    - :page_facing_up: [02 - Model
+    - :page_facing_up: [03 - Model
       Fitting](code/analysis/BFMM-paper-modelling.R)
-    - :page_facing_up: [03 - Bootstrap and Wald
+    - :page_facing_up: [04 - Bootstrap and Wald
       Inference](code/analysis/BFMM-paper-bootstrap.R)
-    - :page_facing_up: [04 - Plotting Fixed-Effects
+    - :page_facing_up: [05 - Plotting Fixed-Effects
       Results](code/analysis/BFMM-paper-fixef-results.R)
-    - :page_facing_up: [05 - Plotting Random-Effects
+    - :page_facing_up: [06 - Plotting Random-Effects
       Results](code/analysis/BFMM-paper-covariance-results.R)
-    - :page_facing_up: [06 - Additional Exploratory Analysis of
+    - :page_facing_up: [07 - Additional Exploratory Analysis of
       Random-Effects
       Results](code/analysis/BFMM-paper-covariance-extra.R)
   - :open_file_folder: **functions** – custom functions used to perform
