@@ -22,6 +22,8 @@ using functional data analysis’
     - :page_facing_up: [07 - Additional Exploratory Analysis of
       Random-Effects
       Results](code/analysis/BFMM-paper-covariance-extra.R)
+    - :page_facing_up: [08 - Analysis of
+      ICC](code/analysis/BFMM-icc-analysis.R)
   - :open_file_folder: **functions** – custom functions used to perform
     the data analysis and simulation
     - :page_facing_up: [Custom `ggplot2` theme for
