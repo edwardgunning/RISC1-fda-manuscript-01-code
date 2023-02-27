@@ -116,3 +116,39 @@ tikz(file.path(plots_path, "intro-plot.tex"),
      height = doc_width_inches/3)
 print(full_plot)
 dev.off()
+
+
+
+
+# Extra - American spelling for JASA --------------------------------------
+
+knee_plot_Am <- ggplot(data = eval_reg_wider) + 
+  aes(x = t, y = Knee, group = interaction(subject_id, side)) +
+  geom_line(colour = "grey15", alpha = 0.5) +
+  labs(x = "Normalized Time ($\\%$ of Stride)",
+       y = "Knee Angle ($^{\\circ}$)") +
+  geom_line(data = eval_reg_wider[subject_id== "P_4001"],
+            aes(colour = side), lwd = 1) +
+  theme(legend.position = "none")
+
+hip_plot_Am <- ggplot(data = eval_reg_wider) + 
+  aes(x = t, y = Hip, group = interaction(subject_id, side)) +
+  geom_line(colour = "grey15", alpha = 0.5) +
+  labs(x = "Normalized Time ($\\%$ of Stride)",
+       y = "Hip Angle ($^{\\circ}$)") +
+  geom_line(data = eval_reg_wider[subject_id== "P_4001"],
+            aes(colour = side), lwd = 1) +
+  theme(legend.position = "none")
+
+
+full_plot_Am <- ggpubr::ggarrange(plotlist = list(hip_plot_Am, knee_plot_Am, hip_knee_plot),
+                               nrow = 1, ncol = 3, labels = c("(a)", "(b)", "(c)"),
+                               font.label = list(size = 11, color = "black", face = "plain", family = NULL),
+                               label.x = 0.2, label.y = 0.95)
+
+
+tikz(file.path(plots_path, "intro-plot-Am.tex"),
+     width = doc_width_inches, 
+     height = doc_width_inches/3)
+print(full_plot_Am)
+dev.off()

@@ -107,6 +107,46 @@ dev.off()
 
 
 
+# Extra = Americn spellings for JASA: ------------------------------------
+hip_coef_functions_plot_Am <- ggplot(data = parameter_results_dt[dimension == "hip"]) +
+  aes(x = t, colour = beta_label_part_1) +
+  facet_wrap(~ beta_label_part_1, scales = "free_y") +
+  geom_line(aes(y = point_est)) +
+  geom_ribbon(aes(ymin = sim_boot_lower, ymax = sim_boot_upper, fill = beta_label_part_1), alpha = 0.25) +
+  geom_line(aes(y = pw_boot_lower), lty = 2) +
+  geom_line(aes(y = pw_boot_upper), lty = 2) +
+  geom_hline(yintercept  = 0, col = "darkgrey") +
+  theme(legend.position = "none") +
+  labs(x = "Normalized Time ($\\%$ of Stride)",
+       y = "Coefficient Function $\\beta^{(hip)}_a (t)$",
+       title = "Hip")
+
+knee_coef_functions_plot_Am <- ggplot(data = parameter_results_dt[dimension == "knee"]) +
+  aes(x = t, colour = beta_label_part_1) +
+  geom_hline(yintercept  = 0, col = "grey") +
+  facet_wrap(~ beta_label_part_1, scales = "free_y") +
+  geom_line(aes(y = point_est)) +
+  geom_ribbon(aes(ymin = sim_boot_lower, ymax = sim_boot_upper, fill = beta_label_part_1), alpha = 0.25) +
+  geom_line(aes(y = pw_boot_lower), lty = 2) +
+  geom_line(aes(y = pw_boot_upper), lty = 2) +
+  theme(legend.position = "none") +
+  labs(x = "Normalized Time ($\\%$ of Stride)",
+       y = "Coefficient Function $\\beta^{(knee)}_a (t)$",
+       title = "Knee")
+
+hip_coef_functions_plot_Am
+knee_coef_functions_plot_Am
+
+tikz(file.path(plots_path, "coefficient-functions-plot-Am.tex"),
+     width = 1 * doc_width_inches, 
+     height = 1.5 * (doc_width_inches))
+ggarrange(hip_coef_functions_plot_Am, knee_coef_functions_plot_Am, nrow =2, ncol = 1)
+dev.off()
+
+
+
+
+
 # -------------------------------------------------------------------------
 
 ggplot(data = parameter_results_dt[dimension == "hip"]) +
@@ -263,5 +303,41 @@ tikz(file.path(plots_path, "speed-predictions.tex"),
      width = 1.5 * doc_width_inches, 
      height = 0.45 * (doc_width_inches))
 ggarrange(p1_hip, p1_knee, p2, p3, nrow = 1, ncol = 4, common.legend = TRUE, legend = "bottom")
+dev.off()
+
+
+# Extra: American Spelling for JASA: --------------------------------------
+
+p1_hip_Am <- ggplot(data = speed_predictions_dt_long[dimension == "hip"]) +
+  aes(x=t, y = angle, group = speed, colour = speed) +
+  geom_line() +
+  labs(x = "Normalized Time ($\\%$ of Stride)",
+       y = "Angle ($^{\\circ}$)",
+       colour = "Speed (kmph)") +
+  guides(colour = guide_legend(override.aes = list(size = 1))) +
+  labs(title = "(a) Hip Angle")
+
+p1_knee_Am <- ggplot(data = speed_predictions_dt_long[dimension == "knee"]) +
+  aes(x=t, y = angle, group = speed, colour = speed) +
+  geom_line() +
+  labs(x = "Normalized Time ($\\%$ of Stride)",
+       y = "Angle ($^{\\circ}$)",
+       colour = "Speed (kmph)") +
+  guides(colour = guide_legend(override.aes = list(size = 1))) +
+  labs(title = "(b) Knee Angle")
+
+
+
+(p_speed_Am <- ggarrange(p1_hip_Am, p1_knee_Am, p2, p3, 
+                      nrow = 1, ncol = 4,
+                      common.legend = TRUE,
+                      legend = "bottom"))
+
+# Save for Publishing: ---------------------------------------------------
+
+tikz(file.path(plots_path, "speed-predictions-Am.tex"),
+     width = 1.5 * doc_width_inches, 
+     height = 0.45 * (doc_width_inches))
+ggarrange(p1_hip_Am, p1_knee_Am, p2, p3, nrow = 1, ncol = 4, common.legend = TRUE, legend = "bottom")
 dev.off()
 

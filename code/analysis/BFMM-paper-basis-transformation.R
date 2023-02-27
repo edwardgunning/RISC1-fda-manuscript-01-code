@@ -294,3 +294,37 @@ basis_transform_results <- list(
 saveRDS(object = basis_transform_results,
         file = file.path(results_path,"basis-transform-results.rds"))
 
+
+
+# Extra: American Spelling on plot for JASA -------------------------------
+
+
+(reconstruction_plot_Am <- ggplot(data = plot_reconstruction_dt_lng) +
+   aes(x = t,
+       y = angle,
+       colour = rep, 
+       lty = reconstruct,
+       alpha = reconstruct,
+       group = interaction(reconstruct, rep)) +
+   facet_wrap( ~ dimension, scales = "free_y") +
+   scale_alpha_manual(values = c(0.5,1)) +
+   geom_line(linewidth = 0.75) +
+   labs(x = "Normalized Time ($\\%$ of Stride)", y = "Angle ($^{\\circ}$)",
+        title = "\\textbf{(c)} Sample Reconstructions") +
+   guides(colour ="none") +
+   theme(legend.title = element_blank(),
+         legend.margin = margin(b = -1),
+         legend.position = "bottom"))
+
+
+
+
+# Create publishable combined plot: ------------------------------
+(basis_transform_plot_Am <- ggpubr::ggarrange(variance_explained_plot, 
+                                           reconstruction_plot_Am))
+tikz(file.path(plots_path, "basis-transform-plot-Am.tex"),
+     width = 1.25 * doc_width_inches, 
+     height = 1.25 * (doc_width_inches/3))
+print(basis_transform_plot_Am)
+dev.off()
+
