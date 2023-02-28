@@ -105,18 +105,18 @@ hip_knee_plot <- ggplot(data = eval_reg_wider) +
             aes(colour = side), lwd = 1) +
   geom_label_repel(data = eval_reg_wider_mean[t %in% c(0, 100)], inherit.aes = FALSE,
              mapping = aes(x = Hip, y = Knee, label = paste0("$", t, "\\%$")),
-             size = 2, 
+             size = 1.75, 
              col = 1, 
              segment.color = "white",
              min.segment.length = 0.1) +
   geom_label(data = eval_reg_wider_mean[t %in% c(25, 50, 75)], inherit.aes = FALSE,
                    mapping = aes(x = Hip, y = Knee, label = paste0("$", t, "\\%$")),
-                   size = 2) +
-  geom_point(data = eval_reg_wider_mean[t %in% c(0, 100)], inherit.aes = FALSE, size = 0.1,
+                   size = 1.75) +
+  geom_point(data = eval_reg_wider_mean[t %in% c(0, 100)], inherit.aes = FALSE, size = 0.15,
              mapping = aes(x = Hip, y = Knee), col = "white") +
   theme(legend.position = "none")
 
-
+hip_knee_plot
 
 full_plot <- ggpubr::ggarrange(plotlist = list(hip_plot, knee_plot, hip_knee_plot),
                                nrow = 1, ncol = 3, labels = c("(a)", "(b)", "(c)"),
