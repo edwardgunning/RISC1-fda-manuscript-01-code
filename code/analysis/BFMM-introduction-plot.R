@@ -8,6 +8,7 @@ library(data.table) # CRAN v1.14.0
 library(ggplot2)    # CRAN v3.3.5
 library(fda)        # CRAN v5.5.1
 library(tikzDevice) # CRAN v0.12.3.1
+library(ggrepel)
 
 # Settings for ggplot() figures: ------------------------------------------
 source(here::here("code", "functions", "theme_gunning.R"))
@@ -75,7 +76,7 @@ eval_reg_lng[, t := as.numeric(t)]
 eval_reg_wider <- dcast.data.table(data =  eval_reg_lng,
                                    formula =  subject_id + side + t  ~ location,
                                    value.var = "angle")
-
+eval_reg_wider_mean <- eval_reg_wider[, .(Hip = mean(Hip), Knee = mean(Knee)), by = .(t)]
 
 knee_plot <- ggplot(data = eval_reg_wider) + 
   aes(x = t, y = Knee, group = interaction(subject_id, side)) +
@@ -102,7 +103,20 @@ hip_knee_plot <- ggplot(data = eval_reg_wider) +
        y = "Knee Angle ($^{\\circ}$)") +
   geom_path(data = eval_reg_wider[subject_id== "P_4001"],
             aes(colour = side), lwd = 1) +
+  geom_label_repel(data = eval_reg_wider_mean[t %in% c(0, 100)], inherit.aes = FALSE,
+             mapping = aes(x = Hip, y = Knee, label = paste0("$", t, "\\%$")),
+             size = 2, 
+             col = 1, 
+             segment.color = "white",
+             min.segment.length = 0.1) +
+  geom_label(data = eval_reg_wider_mean[t %in% c(25, 50, 75)], inherit.aes = FALSE,
+                   mapping = aes(x = Hip, y = Knee, label = paste0("$", t, "\\%$")),
+                   size = 2) +
+  geom_point(data = eval_reg_wider_mean[t %in% c(0, 100)], inherit.aes = FALSE, size = 0.1,
+             mapping = aes(x = Hip, y = Knee), col = "white") +
   theme(legend.position = "none")
+
+
 
 full_plot <- ggpubr::ggarrange(plotlist = list(hip_plot, knee_plot, hip_knee_plot),
                                nrow = 1, ncol = 3, labels = c("(a)", "(b)", "(c)"),
