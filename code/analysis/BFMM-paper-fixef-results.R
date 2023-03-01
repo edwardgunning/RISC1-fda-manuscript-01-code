@@ -247,24 +247,53 @@ speed_predictions_dt_long[, speed := as.numeric(stringr::str_remove(speed, "kmph
 speed_predictions_dt_long[, speed := factor(ordered(speed), ordered = FALSE)]
 
 # Create plots: -----------------------------------------------------------
+text_size <- 2
+
+line_height_hip <- 52.5
+text_height_hip <- 57.5
 p1_hip <- ggplot(data = speed_predictions_dt_long[dimension == "hip"]) +
   aes(x=t, y = angle, group = speed, colour = speed) +
+  geom_vline(xintercept = 38, col = "darkgrey", linetype = "dashed", lwd = 0.75) +
   geom_line() +
   labs(x = "Normalised Time ($\\%$ of Stride)",
        y = "Angle ($^{\\circ}$)",
        colour = "Speed (kmph)") +
   guides(colour = guide_legend(override.aes = list(size = 1))) +
-  labs(title = "(a) Hip Angle")
+  labs(title = "(a) Hip Angle") +
+  annotate(geom = "text", x = 27, y = text_height_hip, label = "Stance", size = text_size) +
+  geom_segment(mapping = aes(x = 37, y = line_height_hip, xend = 15, yend = line_height_hip),
+               col = "darkgrey",
+               arrow = arrow(length = unit(0.1,"cm"), type = "closed")) +
+geom_segment(mapping = aes(x = 39, y = line_height_hip, xend = 61, yend = line_height_hip),
+             col = "darkgrey",
+             arrow = arrow(length = unit(0.1,"cm"), type = "closed")) +
+  annotate(geom = "text", x = 48, y = text_height_hip, label = "Swing", size = text_size) +
+  theme(text = element_text(hjust = 0.5))
 
+
+
+line_height_knee <- 100
+text_height_knee <- 107.5
 p1_knee <- ggplot(data = speed_predictions_dt_long[dimension == "knee"]) +
   aes(x=t, y = angle, group = speed, colour = speed) +
+  geom_vline(xintercept = 38, col = "darkgrey", linetype = "dashed", lwd = 0.75) +
   geom_line() +
   labs(x = "Normalised Time ($\\%$ of Stride)",
        y = "Angle ($^{\\circ}$)",
        colour = "Speed (kmph)") +
   guides(colour = guide_legend(override.aes = list(size = 1))) +
-  labs(title = "(b) Knee Angle")
+  labs(title = "(b) Knee Angle") +
+  annotate(geom = "text", x = 27, y = text_height_knee, label = "Stance", size = text_size) +
+  geom_segment(mapping = aes(x = 37, y = line_height_knee, xend = 15, yend = line_height_knee),
+               col = "darkgrey",
+               arrow = arrow(length = unit(0.075,"cm"), type = "closed")) +
+  geom_segment(mapping = aes(x = 39, y = line_height_knee, xend = 61, yend = line_height_knee),
+               col = "darkgrey",
+               arrow = arrow(length = unit(0.075,"cm"), type = "closed")) +
+  annotate(geom = "text", x = 48, y = text_height_knee, label = "Swing", size = text_size) +
+  theme(text = element_text(hjust = 0.5))
 
+p1_knee
 
 speed_dt_wide <- dcast(speed_predictions_dt_long, formula = ... ~ dimension, value.var = "angle")
 p2<-ggplot(data = speed_dt_wide) +
@@ -308,23 +337,9 @@ dev.off()
 
 # Extra: American Spelling for JASA: --------------------------------------
 
-p1_hip_Am <- ggplot(data = speed_predictions_dt_long[dimension == "hip"]) +
-  aes(x=t, y = angle, group = speed, colour = speed) +
-  geom_line() +
-  labs(x = "Normalized Time ($\\%$ of Stride)",
-       y = "Angle ($^{\\circ}$)",
-       colour = "Speed (kmph)") +
-  guides(colour = guide_legend(override.aes = list(size = 1))) +
-  labs(title = "(a) Hip Angle")
+p1_hip_Am <- p1_hip + labs(x = "Normalized Time ($\\%$ of Stride)")
 
-p1_knee_Am <- ggplot(data = speed_predictions_dt_long[dimension == "knee"]) +
-  aes(x=t, y = angle, group = speed, colour = speed) +
-  geom_line() +
-  labs(x = "Normalized Time ($\\%$ of Stride)",
-       y = "Angle ($^{\\circ}$)",
-       colour = "Speed (kmph)") +
-  guides(colour = guide_legend(override.aes = list(size = 1))) +
-  labs(title = "(b) Knee Angle")
+p1_knee_Am <- p1_knee + labs(x = "Normalized Time ($\\%$ of Stride)")
 
 
 
