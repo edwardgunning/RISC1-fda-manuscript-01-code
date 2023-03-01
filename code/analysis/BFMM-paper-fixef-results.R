@@ -247,7 +247,7 @@ speed_predictions_dt_long[, speed := as.numeric(stringr::str_remove(speed, "kmph
 speed_predictions_dt_long[, speed := factor(ordered(speed), ordered = FALSE)]
 
 # Create plots: -----------------------------------------------------------
-text_size <- 2
+text_size <- 2.5
 
 line_height_hip <- 52.5
 text_height_hip <- 57.5
