@@ -396,7 +396,7 @@ p2 <- ggplot(data = ise_dt) +
   geom_line() +
   xlim(c(0, 45)) +
   labs(x = non_zero_label,
-       y = "(Scaled) Reconstruction Error of $\\mathbf{S}(t_1, t_2)$",
+       y = "(Scaled) Reconstruction Error of $\\mathbf{S}(t, t')$",
        title = "Reconstruction Error")
 
 tikz(file.path(plots_path, "glasso-selection-plot.tex"),
@@ -501,7 +501,7 @@ S_plot <- ggplot(S_dt_lng) +
   scale_y_continuous(expand = expand_lim) +
   facet_wrap(~ dim_comb) +
   geom_contour_filled(breaks = breaks_S) +
-  labs(x = "$t_1$", y = "$t_2$", fill = "$\\mathbf{S}(t_1, t_2)$", title = "Model Estimate")
+  labs(x = "$t$", y = "$t'$", fill = "$\\mathbf{S}(t, t')$", title = "Model Estimate")
 
 S_plot_unstruc <- ggplot(S_dt_unstruc_lng) +
   aes(x = s, y = t, z = S_st) +
@@ -509,7 +509,7 @@ S_plot_unstruc <- ggplot(S_dt_unstruc_lng) +
   scale_x_continuous(expand = expand_lim) +
   scale_y_continuous(expand = expand_lim) +
   geom_contour_filled(breaks = breaks_S) +
-  labs(x = "$t_1$", y = "$t_2$", fill = "$\\mathbf{S}(t_1, t_2)$", title = "Unstructured Estimate")
+  labs(x = "$t$", y = "$t'$", fill = "$\\mathbf{S}(t, t')$", title = "Unstructured Estimate")
 
 
 S_plot_sparse <- ggplot(S_dt_sparse_lng) +
@@ -518,7 +518,7 @@ S_plot_sparse <- ggplot(S_dt_sparse_lng) +
   scale_x_continuous(expand = expand_lim) +
   scale_y_continuous(expand = expand_lim) +
   geom_contour_filled(breaks = breaks_S) +
-  labs(x = "$t_1$", y = "$t_2$", fill = "$\\mathbf{S}(t_1, t_2)$", title = "Sparse Estimate")
+  labs(x = "$t$", y = "$t'$", fill = "$\\mathbf{S}(t, t')$", title = "Sparse Estimate")
 
 
 

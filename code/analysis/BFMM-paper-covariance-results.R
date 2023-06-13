@@ -158,7 +158,7 @@ Q_plot <- ggplot(Q_dt_lng) +
   scale_y_continuous(expand = expand_lim) +
   facet_wrap(~ dim_comb) +
   geom_contour_filled(breaks = breaks_Q) +
-  labs(x = "$t_1$", y = "$t_2$", fill = "$\\mathbf{Q}(t_1, t_2)$", title = "Model Estimate")
+  labs(x = "$t$", y = "$t'$", fill = "$\\mathbf{Q}(t, t')$", title = "Model Estimate")
 
 
 Q_plot_unstruc <- ggplot(Q_dt_unstruc_lng) +
@@ -167,7 +167,7 @@ Q_plot_unstruc <- ggplot(Q_dt_unstruc_lng) +
   scale_x_continuous(expand = expand_lim) +
   scale_y_continuous(expand = expand_lim) +
   geom_contour_filled(breaks = breaks_Q) +
-  labs(x = "$t_1$", y = "$t_2$", fill = "$\\mathbf{Q}(t_1, t_2)$", title = "Unstructured Estimate")
+  labs(x = "$t$", y = "$t'$", fill = "$\\mathbf{Q}(t, t')$", title = "Unstructured Estimate")
 
 
 
@@ -226,7 +226,7 @@ S_plot <- ggplot(S_dt_lng) +
   scale_y_continuous(expand = expand_lim) +
   facet_wrap(~ dim_comb) +
   geom_contour_filled(breaks = breaks_S) +
-  labs(x = "$t_1$", y = "$t_2$", fill = "$\\mathbf{S}(t_1, t_2)$", title = "Model Estimate")
+  labs(x = "$t$", y = "$t'$", fill = "$\\mathbf{S}(t, t')$", title = "Model Estimate")
 
 
 
@@ -236,7 +236,7 @@ S_plot_unstruc <- ggplot(S_dt_unstruc_lng) +
   scale_x_continuous(expand = expand_lim) +
   scale_y_continuous(expand = expand_lim) +
   geom_contour_filled(breaks = breaks_S) +
-  labs(x = "$t_1$", y = "$t_2$", fill = "$\\mathbf{S}(t_1, t_2)$", title = "Unstructured Estimate")
+  labs(x = "$t$", y = "$t'$", fill = "$\\mathbf{S}(t, t')$", title = "Unstructured Estimate")
 
 
 
