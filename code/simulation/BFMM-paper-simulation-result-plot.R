@@ -382,8 +382,8 @@ cov_results_dt_lng <- melt.data.table(
 
 cov_results_dt_lng[, param_name := fifelse(
   paramater == "ise_Q",
-  "$\\textbf{Q}(t_1, t_2)$",
-  "$\\textbf{S}(t_1, t_2)$"
+  "$\\textbf{Q}(t, t')$",
+  "$\\textbf{S}(t, t')$"
 )]
 
 
