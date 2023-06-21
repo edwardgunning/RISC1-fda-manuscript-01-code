@@ -25,7 +25,7 @@ settings <- mfamm_results$settings
 plot(interaction(settings$bf_covs, settings$mfpc_cutoff), time_vec/60)
 
                     # Create table of computation times: --------------------------------------
-time_df <- data.frame(K = settings$bf_covs, 
+time_df <- data.frame(K = integer(settings$bf_covs), 
            PVE = settings$mfpc_cutoff,
            ct = round(time_vec/60,2))
 names(time_df) <- c("$K$ Marginal", "PVE",  "Time (mins)")
@@ -34,7 +34,7 @@ bold <- function(x) {
   paste0("{\\bfseries ", x, "}") 
 }
 time_table <- xtable(time_df, 
-                     digits = 2, 
+                     digits =  c(0,0, 2, 2), 
                      label = "tab:mfamm-comp-time",
                      caption = "Computation time for the multiFAMM model with different settings.")
 align(time_table)[1] <- "l"
@@ -42,6 +42,7 @@ print(time_table,
       file = here::here("outputs", "tables", "mfamm-comp-time.tex"),
       sanitize.text.function = function(x){x},
       sanitize.colnames.function = bold,
+      include.rownames = FALSE,
       booktabs = TRUE)
 
                     # Create plot of results: -------------------------------------------------
