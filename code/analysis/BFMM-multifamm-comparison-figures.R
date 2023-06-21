@@ -1,6 +1,7 @@
 library(ggplot2)    # CRAN v3.4.0
 library(data.table) # CRAN v1.14.2
 library(tikzDevice) # CRAN v0.12.3.1
+library(xtable)     # CRAN v1.8-4
 # -------------------------------------------------------------------------
 source(here::here("code", "functions", "theme_gunning.R"))
 theme_gunning() # set theme
@@ -23,9 +24,29 @@ settings <- mfamm_results$settings
 
 plot(interaction(settings$bf_covs, settings$mfpc_cutoff), time_vec/60)
 
+                    # Create table of computation times: --------------------------------------
+time_df <- data.frame(K = settings$bf_covs, 
+           PVE = settings$mfpc_cutoff,
+           ct = round(time_vec/60,2))
+names(time_df) <- c("$K$ Marginal", "PVE",  "Time (mins)")
+time_df
+bold <- function(x) {
+  paste0("{\\bfseries ", x, "}") 
+}
+time_table <- xtable(time_df, 
+                     digits = 2, 
+                     label = "tab:mfamm-comp-time",
+                     caption = "Computation time for the multiFAMM model with different settings.")
+align(time_table)[1] <- "l"
+print(time_table, 
+      file = here::here("outputs", "tables", "mfamm-comp-time.tex"),
+      sanitize.text.function = function(x){x},
+      sanitize.colnames.function = bold,
+      booktabs = TRUE)
+
+                    # Create plot of results: -------------------------------------------------
 settings_index <- seq_len(8)
 names(settings_index) <- paste0("setting_", settings_index)
-
 plot_df <- purrr::map_dfr(.x = settings_index, .f = function(x) {
   df_i <- results_list[[x]]
   df_i$bf_covs <- settings[x, "bf_covs"]
@@ -33,7 +54,6 @@ plot_df <- purrr::map_dfr(.x = settings_index, .f = function(x) {
   df_i
 })
 plot_dt <- as.data.table(plot_df)
-
 
 # -------------------------------------------------------------------------
 bootstrap_results <- readRDS(file.path(results_path, "bootstrap-results.rds"))
@@ -107,7 +127,7 @@ plot_dt[, combo := factor(combo,
 hip <-ggplot(data = plot_dt[dim == "hip"]) +
   aes(x = t, y = estimate, colour = combo) +
   geom_line(alpha = 1, aes(linetype = "Point Estimate")) +
-  geom_hline(yintercept = 0, col = "darkgrey") +
+  geom_hline(yintercept = 0, col = "grey") +
   facet_wrap(~ beta_label_part_1, scales = "free_y")  +
   geom_line(data = parameter_results_dt[dimension=="hip"],
             aes(x = t, y = point_est),
@@ -122,13 +142,13 @@ hip <-ggplot(data = plot_dt[dim == "hip"]) +
   labs(x = "Normalised Time ($\\%$ of Stride)",
        y = "Coefficient Function $\\beta^{(hip)}_a (t)$",
        title = "Hip") +
-  guides(linetype = guide_legend(override.aes = list(linewidth = 1)),
-         colour = guide_legend(override.aes = list(linewidth = 1)))
+  guides(linetype = guide_legend(override.aes = list(linewidth = 0.8, colour = "darkslategrey")),
+         colour = guide_legend(override.aes = list(linewidth = 0.8)))
 
 knee <-ggplot(data = plot_dt[dim == "knee"]) +
   aes(x = t, y = estimate, colour = combo) +
   geom_line(alpha = 1, aes(linetype = "Point Estimate")) +
-  geom_hline(yintercept = 0, col = "darkgrey") +
+  geom_hline(yintercept = 0, col = "grey") +
   facet_wrap(~ beta_label_part_1, scales = "free_y")  +
   geom_line(data = parameter_results_dt[dimension=="knee"],
             aes(x = t, y = point_est),
@@ -143,12 +163,13 @@ knee <-ggplot(data = plot_dt[dim == "knee"]) +
   labs(x = "Normalised Time ($\\%$ of Stride)",
        y = "Coefficient Function $\\beta^{(knee)}_a (t)$",
        title = "Knee") +
-  guides(linetype = guide_legend(override.aes = list(linewidth = 0.8)),
+  guides(linetype = guide_legend(override.aes = list(linewidth = 0.8, colour = "darkslategrey")),
          colour = guide_legend(override.aes = list(linewidth = 0.8))) 
   
  
 combined_plot <- ggpubr::ggarrange(hip, knee, common.legend = TRUE, nrow = 2, legend = "bottom")
 combined_plot   
+
 tikz(file.path(plots_path, "mfamm-comparison.tex"),
      width = 1 * doc_width_inches, 
      height = 1.65 * (doc_width_inches),
