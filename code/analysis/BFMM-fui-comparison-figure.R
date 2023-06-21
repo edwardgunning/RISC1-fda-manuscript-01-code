@@ -14,8 +14,7 @@ library(ggplot2)    # CRAN v3.4.0
 source(here::here("code", "functions", "theme_gunning.R"))
 theme_gunning() # set theme
 # + some customisations for plots
-theme_update(panel.grid.major = element_blank(),
-             legend.key.size = unit(0.95,"line"))
+theme_update(legend.key.size = unit(0.95,"line"))
 
 # rough guide for sizing of plot outputs:
 doc_width_cm <- 16
@@ -79,6 +78,7 @@ head(combined_parameter_results_dt)
 a1 <- ggplot(data = combined_parameter_results_dt[dimension == "hip"]) +
   aes(x = t) +
   facet_wrap(~ beta_label_part_1, scales = "free_y") +
+  geom_hline(yintercept = 0) +
   geom_line(aes(y = point_est, colour = "Current", linetype = "Point Estimate")) +
   geom_line(aes(y = fui_point_est, colour = "FUI", linetype = "Point Estimate")) +
   geom_line(aes(y = pw_fui_lower_analytic, colour = "FUI", linetype = "Pointwise CI")) +
@@ -97,6 +97,7 @@ a1 <- ggplot(data = combined_parameter_results_dt[dimension == "hip"]) +
 a2 <- ggplot(data = combined_parameter_results_dt[dimension == "knee"]) +
   aes(x = t) +
   facet_wrap(~ beta_label_part_1, scales = "free_y") +
+  geom_hline(yintercept = 0) +
   geom_line(aes(y = point_est, colour = "Current", linetype = "Point Estimate")) +
   geom_line(aes(y = fui_point_est, colour = "FUI", linetype = "Point Estimate")) +
   geom_line(aes(y = pw_fui_lower_analytic, colour = "FUI", linetype = "Pointwise CI")) +
@@ -126,6 +127,7 @@ tinytex::lualatex(file.path(plots_path, "fui-comparison-analytic.tex"))
 b1 <- ggplot(data = combined_parameter_results_dt[dimension == "hip"]) +
   aes(x = t) +
   facet_wrap(~ beta_label_part_1, scales = "free_y") +
+  geom_hline(yintercept = 0) +
   geom_line(aes(y = point_est, colour = "Current", linetype = "Point Estimate")) +
   geom_line(aes(y = fui_point_est, colour = "FUI", linetype = "Point Estimate")) +
   geom_line(aes(y = pw_fui_lower_boot, colour = "FUI", linetype = "Pointwise CI")) +
@@ -144,6 +146,7 @@ b1 <- ggplot(data = combined_parameter_results_dt[dimension == "hip"]) +
 b2 <- ggplot(data = combined_parameter_results_dt[dimension == "knee"]) +
   aes(x = t) +
   facet_wrap(~ beta_label_part_1, scales = "free_y") +
+  geom_hline(yintercept = 0) +
   geom_line(aes(y = point_est, colour = "Current", linetype = "Point Estimate")) +
   geom_line(aes(y = fui_point_est, colour = "FUI", linetype = "Point Estimate")) +
   geom_line(aes(y = pw_fui_lower_boot, colour = "FUI", linetype = "Pointwise CI")) +
