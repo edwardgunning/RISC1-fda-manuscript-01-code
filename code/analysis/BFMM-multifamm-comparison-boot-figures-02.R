@@ -87,7 +87,7 @@ plot_dt[, beta_label_part_1 := factor(
     "Height"
   ))]
 
-
+plot_dt[, b := factor(b, levels = paste(1:10))]
 hip <-ggplot(data = plot_dt[dim == "hip"]) +
   aes(x = t, y = estimate, colour = b) +
   # geom_line(alpha = 1, aes(linetype = "Point Estimate")) +
@@ -101,8 +101,7 @@ hip <-ggplot(data = plot_dt[dim == "hip"]) +
   # scale_linetype_manual(values = c(3, 1)) +
   # geom_line(aes(y = lower, linetype = "CI")) +
   # geom_line(aes(y = upper, linetype = "CI")) +
-  theme(legend.title = element_blank(),
-        legend.position = "bottom", 
+  theme(legend.position = "bottom", 
         legend.box = "vertical") +
   labs(x = "Normalised Time ($\\%$ of Stride)",
        y = "Coefficient Function $\\beta^{(hip)}_a (t)$",
@@ -134,7 +133,7 @@ knee <-ggplot(data = plot_dt[dim == "knee"]) +
          colour = guide_legend(override.aes = list(linewidth = 1)))
 
 combined_plot <- ggpubr::ggarrange(hip, knee, common.legend = TRUE, nrow = 2, legend = "bottom")
-combined_plot   
+combined_plot
 
 tikz(file.path(plots_path, "mfamm-comparison-bootstrap-02.tex"),
      width = 1 * doc_width_inches, 
