@@ -95,21 +95,13 @@ plot_dt[, beta_label_part_1 := factor(
   ))]
 
 plot_dt[, combo := paste0("$K =", bf_covs, "$, pve $=", cutoff, "$")]
+plot_dt[, combo := factor(combo,
+                          levels = c(paste0("$K =", 5, "$, pve $=", c(0.9, 0.95), "$"), 
+                                     paste0("$K =", 8, "$, pve $=", c(0.9, 0.95), "$"),
+                                     paste0("$K =", 10, "$, pve $=", c(0.9, 0.95), "$"),
+                                     paste0("$K =", 15, "$, pve $=", c(0.9, 0.95), "$")))]
 
-paste0("$K =", c(5, 8, 10, 15), "$, pve $=", 0.95, "$")
 
-
-
-#+
-  
-# geom_line(data = parameter_results_dt[dimension=="hip"],
-  #           aes(x = t, y = pw_boot_lower),
-  #           inherit.aes = FALSE,
-  #           lty = 2) +
-  # geom_line(data = parameter_results_dt[dimension=="hip"],
-  #           aes(x = t, y = pw_boot_upper),
-  #           inherit.aes = FALSE,
-  #           lty = 2)
 
 
 hip <-ggplot(data = plot_dt[dim == "hip"]) +
@@ -121,9 +113,9 @@ hip <-ggplot(data = plot_dt[dim == "hip"]) +
             aes(x = t, y = point_est),
             inherit.aes = FALSE,
             linewidth = 0.8) +
-  scale_linetype_manual(values = c(3, 1)) +
-  geom_line(aes(y = lower, linetype = "CI")) +
-  geom_line(aes(y = upper, linetype = "CI")) +
+  scale_linetype_manual(values = c(1, 3)) +
+  geom_line(aes(y = lower, linetype = "Pointwise CI")) +
+  geom_line(aes(y = upper, linetype = "Pointwise CI")) +
   theme(legend.title = element_blank(),
         legend.position = "bottom", 
         legend.box = "vertical") +
@@ -142,9 +134,9 @@ knee <-ggplot(data = plot_dt[dim == "knee"]) +
             aes(x = t, y = point_est),
             inherit.aes = FALSE,
             linewidth = 0.8) +
-  scale_linetype_manual(values = c(3, 1)) +
-  geom_line(aes(y = lower, linetype = "CI")) +
-  geom_line(aes(y = upper, linetype = "CI")) +
+  scale_linetype_manual(values = c(1, 3)) +
+  geom_line(aes(y = lower, linetype = "Pointwise CI")) +
+  geom_line(aes(y = upper, linetype = "Pointwise CI")) +
   theme(legend.title = element_blank(),
         legend.position = "bottom", 
         legend.box = "vertical") +
