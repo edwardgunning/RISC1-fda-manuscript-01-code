@@ -257,7 +257,7 @@ p1_hip <- ggplot(data = speed_predictions_dt_long[dimension == "hip"]) +
   geom_line() +
   labs(x = "Normalised Time ($\\%$ of Stride)",
        y = "Angle ($^{\\circ}$)",
-       colour = "Speed (kmph)") +
+       colour = "Speed (kmph):") +
   guides(colour = guide_legend(override.aes = list(size = 1))) +
   labs(title = "(a) Hip Angle") +
   annotate(geom = "text", x = 27, y = text_height_hip, label = "Stance", size = text_size) +
@@ -280,7 +280,7 @@ p1_knee <- ggplot(data = speed_predictions_dt_long[dimension == "knee"]) +
   geom_line() +
   labs(x = "Normalised Time ($\\%$ of Stride)",
        y = "Angle ($^{\\circ}$)",
-       colour = "Speed (kmph)") +
+       colour = "Speed (kmph):") +
   guides(colour = guide_legend(override.aes = list(size = 1))) +
   labs(title = "(b) Knee Angle") +
   annotate(geom = "text", x = 27, y = text_height_knee, label = "Stance", size = text_size) +
@@ -303,7 +303,7 @@ p2<-ggplot(data = speed_dt_wide) +
              mapping = aes(label = paste0("$", t, "\\%$")), size = 2.25, col = 1) +
   labs(x = "Hip Angle ($^{\\circ}$)",
        y = "Knee Angle ($^{\\circ}$)",
-       colour = "Speed (kmph)",
+       colour = "Speed (kmph):",
        title = "(c) Angle-Angle Diagram") +
   guides(colour = guide_legend(override.aes = list(size = 1)))
 p2
@@ -315,7 +315,7 @@ p3 <- ggplot(data = barplot_dt) +
   aes(x = self_selected_speed_kmph, fill = fill_var) +
   geom_bar(col = "black", linewidth = 0.25) +
   scale_fill_manual(values = c("grey", gg_color_hue(5))) +
-  labs(x = "Speed (kmph)", y = "Count", title = "Barplot of Observed Speeds") +
+  labs(x = "Speed (kmph):", y = "Count", title = "Barplot of Observed Speeds") +
   scale_y_continuous(expand = c(0, 0), limits = c(0, 145)) +
   scale_x_continuous(breaks = c(6:16)) + 
   theme(legend.position = "none") +
@@ -328,10 +328,12 @@ p3 <- ggplot(data = barplot_dt) +
 
 # Save for Publishing: ---------------------------------------------------
 
+
+
 tikz(file.path(plots_path, "speed-predictions.tex"),
-     width = 1.5 * doc_width_inches, 
-     height = 0.45 * (doc_width_inches))
-ggarrange(p1_hip, p1_knee, p2, p3, nrow = 1, ncol = 4, common.legend = TRUE, legend = "bottom")
+     width = 1 * doc_width_inches, 
+     height = 1.025 * (doc_width_inches))
+ggarrange(p1_hip, p1_knee, p2, p3, nrow = 2, ncol = 2, common.legend = TRUE, legend = "bottom")
 dev.off()
 
 
