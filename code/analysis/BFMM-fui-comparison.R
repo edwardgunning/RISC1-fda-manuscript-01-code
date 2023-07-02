@@ -11,6 +11,7 @@ library(ggplot2)    # CRAN v3.3.5
 library(fda)        # CRAN v5.5.1
 library(multifamm)  # CRAN v0.1.1
 library(sparseFLMM) # CRAN v0.4.1
+library(xtable)     # CRAN v1.8-4
 source("code/functions/FUI-functions/lfosr3s.R")
 source("code/functions/FUI-functions/lfosr3s-updated.R")
 
@@ -81,7 +82,31 @@ fui_knee_boot_time <- system.time(
                              var = TRUE,
                              analytic = FALSE,
                              parallel = TRUE))["elapsed"]
+fui_hip_analytic_time
 
+
+fui_df <-data.frame(
+  Approach = rep(c("Analytic", "Bootstrap"), each = 2),
+  Dimension = rep(c("Hip", "Knee"), times = 2),
+  time = c(fui_hip_analytic_time,
+                     fui_knee_analytic_time,
+                     fui_hip_boot_time, 
+                     fui_knee_boot_time))
+colnames(fui_df)[3] <- "Time (secs)"
+bold <- function(x) {
+  paste0("{\\bfseries ", x, "}") 
+}
+fui_table <- xtable(fui_df, 
+                     digits =  c(0, 0, 0, 2), 
+                     label = "tab:fui-comp-time",
+                     caption = "Computation time for fitting separate FUI models to the hip and knee data using bootstrap and analytic approaches.")
+align(fui_table)[1] <- "l"
+print(fui_table, 
+      file = here::here("outputs", "tables", "fui-comp-time.tex"),
+      sanitize.text.function = function(x){x},
+      sanitize.colnames.function = bold,
+      include.rownames = FALSE,
+      booktabs = TRUE)
 
 
 t <- 0:100
@@ -121,8 +146,6 @@ for(i in 1:9) {
   fui_results_df <- rbind(fui_results_df, df_i)
 }
 
-
-
-
 saveRDS(object = fui_results_df, file = here::here("outputs", "results", "fui_comparison.rds"))
+
 

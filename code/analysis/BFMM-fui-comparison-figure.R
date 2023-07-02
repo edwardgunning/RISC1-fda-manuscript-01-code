@@ -73,45 +73,51 @@ combined_parameter_results_dt[, beta_label_part_1 := factor(
 
 
 
-# -------------------------------------------------------------------------
-head(combined_parameter_results_dt)
-a1 <- ggplot(data = combined_parameter_results_dt[dimension == "hip"]) +
+ggplot(data = combined_parameter_results_dt[dimension == "hip"]) +
   aes(x = t) +
   facet_wrap(~ beta_label_part_1, scales = "free_y") +
   geom_hline(yintercept = 0, colour = "grey") +
   geom_line(aes(y = point_est, colour = "Current", linetype = "Point Estimate")) +
   geom_line(aes(y = fui_point_est, colour = "FUI", linetype = "Point Estimate")) +
-  geom_line(aes(y = pw_fui_lower_analytic, colour = "FUI", linetype = "Pointwise CI")) +
-  geom_line(aes(y = pw_fui_upper_analytic, colour = "FUI", linetype = "Pointwise CI")) +
-  geom_line(aes(y = pw_wald_lower, colour = "Current", linetype = "Pointwise CI")) +
-  geom_line(aes(y = pw_wald_upper, colour = "Current", linetype = "Pointwise CI")) +
-  scale_colour_manual(values = c("red4", "blue4")) +
+  geom_ribbon(aes(ymin = pw_fui_lower_analytic, ymax =  pw_fui_upper_analytic, fill = "FUI"), alpha = 0.25) +
+  geom_ribbon(aes(ymin = pw_wald_lower, ymax = pw_wald_upper, fill = "current"), alpha = 0.25)
+
+?geom_ribbon
+# -------------------------------------------------------------------------
+head(combined_parameter_results_dt)
+(a1 <- ggplot(data = combined_parameter_results_dt[dimension == "hip"]) +
+  aes(x = t) +
+  facet_wrap(~ beta_label_part_1, scales = "free_y") +
+  geom_hline(yintercept = 0, colour = "grey") +
+  geom_line(aes(y = point_est, colour = "Current")) +
+  geom_line(aes(y = fui_point_est, colour = "FUI")) +
+  geom_ribbon(aes(ymin = pw_fui_lower_analytic, ymax =  pw_fui_upper_analytic, fill = "FUI"), alpha = 0.25) +
+  geom_ribbon(aes(ymin = pw_wald_lower, ymax = pw_wald_upper, fill = "Current"), alpha = 0.25) +
+  # scale_colour_manual(values = c("red", "blue")) +
+  # scale_fill_manual(values = c("red", "blue")) +
   theme(legend.position = "bottom", legend.title = element_blank()) +
   scale_linetype_manual(values = c(1, 2)) +
   labs(x = "Normalised Time ($\\%$ of Stride)",
        y = "Coefficient Function $\\beta^{(hip)}_a (t)$",
        title = "Hip") +
   guides(linetype = guide_legend(override.aes = list(linewidth = 1)),
-         colour = guide_legend(override.aes = list(linewidth = 1)))
+         colour = guide_legend(override.aes = list(linewidth = 1))))
 
-a2 <- ggplot(data = combined_parameter_results_dt[dimension == "knee"]) +
-  aes(x = t) +
-  facet_wrap(~ beta_label_part_1, scales = "free_y") +
-  geom_hline(yintercept = 0, colour = "grey") +
-  geom_line(aes(y = point_est, colour = "Current", linetype = "Point Estimate")) +
-  geom_line(aes(y = fui_point_est, colour = "FUI", linetype = "Point Estimate")) +
-  geom_line(aes(y = pw_fui_lower_analytic, colour = "FUI", linetype = "Pointwise CI")) +
-  geom_line(aes(y = pw_fui_upper_analytic, colour = "FUI", linetype = "Pointwise CI")) +
-  geom_line(aes(y = pw_wald_lower, colour = "Current", linetype = "Pointwise CI")) +
-  geom_line(aes(y = pw_wald_upper, colour = "Current", linetype = "Pointwise CI")) +
-  scale_colour_manual(values = c("red4", "blue4")) +
+(a2 <- ggplot(data = combined_parameter_results_dt[dimension == "knee"]) +
+    aes(x = t) +
+    facet_wrap(~ beta_label_part_1, scales = "free_y") +
+    geom_hline(yintercept = 0, colour = "grey") +
+    geom_line(aes(y = point_est, colour = "Current")) +
+    geom_line(aes(y = fui_point_est, colour = "FUI")) +
+    geom_ribbon(aes(ymin = pw_fui_lower_analytic, ymax =  pw_fui_upper_analytic, fill = "FUI"), alpha = 0.25) +
+    geom_ribbon(aes(ymin = pw_wald_lower, ymax = pw_wald_upper, fill = "Current"), alpha = 0.25) +
   theme(legend.position = "bottom", legend.title = element_blank()) +
   scale_linetype_manual(values = c(1, 2)) +
   labs(x = "Normalised Time ($\\%$ of Stride)",
        y = "Coefficient Function $\\beta^{(hip)}_a (t)$",
        title = "Knee") +
   guides(linetype = guide_legend(override.aes = list(linewidth = 1)),
-         colour = guide_legend(override.aes = list(linewidth = 1)))
+         colour = guide_legend(override.aes = list(linewidth = 1))))
 
 
 tikz(file.path(plots_path, "fui-comparison-analytic.tex"),
@@ -124,43 +130,37 @@ dev.off()
 tinytex::lualatex(file.path(plots_path, "fui-comparison-analytic.tex"))
 
 
-b1 <- ggplot(data = combined_parameter_results_dt[dimension == "hip"]) +
+(b1 <- ggplot(data = combined_parameter_results_dt[dimension == "hip"]) +
   aes(x = t) +
   facet_wrap(~ beta_label_part_1, scales = "free_y") +
   geom_hline(yintercept = 0, colour = "grey") +
-  geom_line(aes(y = point_est, colour = "Current", linetype = "Point Estimate")) +
-  geom_line(aes(y = fui_point_est, colour = "FUI", linetype = "Point Estimate")) +
-  geom_line(aes(y = pw_fui_lower_boot, colour = "FUI", linetype = "Pointwise CI")) +
-  geom_line(aes(y = pw_fui_upper_boot, colour = "FUI", linetype = "Pointwise CI")) +
-  geom_line(aes(y = pw_boot_lower, colour = "Current", linetype = "Pointwise CI")) +
-  geom_line(aes(y = pw_boot_upper, colour = "Current", linetype = "Pointwise CI")) +
-  scale_colour_manual(values = c("red4", "blue4")) +
+  geom_line(aes(y = point_est, colour = "Current")) +
+  geom_line(aes(y = fui_point_est, colour = "FUI")) +
+  geom_ribbon(aes(ymin = pw_fui_lower_boot, ymax =  pw_fui_upper_boot, fill = "FUI"), alpha = 0.25) +
+  geom_ribbon(aes(ymin = pw_boot_lower, ymax = pw_boot_upper, fill = "Current"), alpha = 0.25) +
   theme(legend.position = "bottom", legend.title = element_blank()) +
   scale_linetype_manual(values = c(1, 2)) +
   labs(x = "Normalised Time ($\\%$ of Stride)",
        y = "Coefficient Function $\\beta^{(hip)}_a (t)$",
        title = "Hip") +
   guides(linetype = guide_legend(override.aes = list(linewidth = 1)),
-         colour = guide_legend(override.aes = list(linewidth = 1)))
+         colour = guide_legend(override.aes = list(linewidth = 1))))
 
-b2 <- ggplot(data = combined_parameter_results_dt[dimension == "knee"]) +
-  aes(x = t) +
-  facet_wrap(~ beta_label_part_1, scales = "free_y") +
-  geom_hline(yintercept = 0, colour = "grey") +
-  geom_line(aes(y = point_est, colour = "Current", linetype = "Point Estimate")) +
-  geom_line(aes(y = fui_point_est, colour = "FUI", linetype = "Point Estimate")) +
-  geom_line(aes(y = pw_fui_lower_boot, colour = "FUI", linetype = "Pointwise CI")) +
-  geom_line(aes(y = pw_fui_upper_boot, colour = "FUI", linetype = "Pointwise CI")) +
-  geom_line(aes(y = pw_boot_lower, colour = "Current", linetype = "Pointwise CI")) +
-  geom_line(aes(y = pw_boot_upper, colour = "Current", linetype = "Pointwise CI")) +
-  scale_colour_manual(values = c("red4", "blue4")) +
+(b2 <- ggplot(data = combined_parameter_results_dt[dimension == "knee"]) +
+    aes(x = t) +
+    facet_wrap(~ beta_label_part_1, scales = "free_y") +
+    geom_hline(yintercept = 0, colour = "grey") +
+    geom_line(aes(y = point_est, colour = "Current")) +
+    geom_line(aes(y = fui_point_est, colour = "FUI")) +
+    geom_ribbon(aes(ymin = pw_fui_lower_boot, ymax =  pw_fui_upper_boot, fill = "FUI"), alpha = 0.25) +
+    geom_ribbon(aes(ymin = pw_boot_lower, ymax = pw_boot_upper, fill = "Current"), alpha = 0.25) +
   theme(legend.position = "bottom", legend.title = element_blank()) +
   scale_linetype_manual(values = c(1, 2)) +
   labs(x = "Normalised Time ($\\%$ of Stride)",
        y = "Coefficient Function $\\beta^{(hip)}_a (t)$",
        title = "Knee") +
   guides(linetype = guide_legend(override.aes = list(linewidth = 1)),
-         colour = guide_legend(override.aes = list(linewidth = 1)))
+         colour = guide_legend(override.aes = list(linewidth = 1))))
 
 tikz(file.path(plots_path, "fui-comparison-bootstrap.tex"),
      width = 1 * doc_width_inches, 
