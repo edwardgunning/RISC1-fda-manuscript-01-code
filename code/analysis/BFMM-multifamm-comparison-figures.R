@@ -16,7 +16,7 @@ doc_width_inches <- doc_width_cm *  0.3937
 plots_path <- here::here("outputs", "figures")
 results_path <- here::here("outputs", "results")
 mfamm_results <- readRDS(here::here(results_path, "mfamm-comparison.rds"))
-source(here::here("code/functions/theme_gunning.R"))
+source(here::here("code", "functions", "theme_gunning.R"))
 
 results_list <- mfamm_results$results_list
 time_vec <- mfamm_results$time_vec
@@ -24,8 +24,8 @@ settings <- mfamm_results$settings
 
 plot(interaction(settings$bf_covs, settings$mfpc_cutoff), time_vec/60)
 
-                    # Create table of computation times: --------------------------------------
-time_df <- data.frame(K = integer(settings$bf_covs), 
+# Create table of computation times: --------------------------------------
+time_df <- data.frame(K = as.integer(settings$bf_covs), 
            PVE = settings$mfpc_cutoff,
            ct = round(time_vec/60,2))
 names(time_df) <- c("$K$ Marginal", "PVE",  "Time (mins)")
@@ -45,7 +45,7 @@ print(time_table,
       include.rownames = FALSE,
       booktabs = TRUE)
 
-                    # Create plot of results: -------------------------------------------------
+# Create plot of results: -------------------------------------------------
 settings_index <- seq_len(8)
 names(settings_index) <- paste0("setting_", settings_index)
 plot_df <- purrr::map_dfr(.x = settings_index, .f = function(x) {

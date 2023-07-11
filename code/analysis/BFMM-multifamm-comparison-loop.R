@@ -5,7 +5,6 @@ library(fda)        # CRAN v5.5.1
 library(multifamm)  # CRAN v0.1.1
 library(sparseFLMM) # CRAN v0.4.1
 
-
 source(file = here::here(
   "code",
   "functions",

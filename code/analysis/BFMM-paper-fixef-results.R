@@ -247,8 +247,7 @@ speed_predictions_dt_long[, speed := as.numeric(stringr::str_remove(speed, "kmph
 speed_predictions_dt_long[, speed := factor(ordered(speed), ordered = FALSE)]
 
 # Create plots: -----------------------------------------------------------
-text_size <- 2.5
-
+text_size <- 3.5
 line_height_hip <- 52.5
 text_height_hip <- 57.5
 p1_hip <- ggplot(data = speed_predictions_dt_long[dimension == "hip"]) +
@@ -258,7 +257,7 @@ p1_hip <- ggplot(data = speed_predictions_dt_long[dimension == "hip"]) +
   labs(x = "Normalised Time ($\\%$ of Stride)",
        y = "Angle ($^{\\circ}$)",
        colour = "Speed (kmph):") +
-  guides(colour = guide_legend(override.aes = list(size = 1))) +
+  guides(colour = guide_legend(override.aes = list(linewidth = 1))) +
   labs(title = "(a) Hip Angle") +
   annotate(geom = "text", x = 27, y = text_height_hip, label = "Stance", size = text_size) +
   geom_segment(mapping = aes(x = 37, y = line_height_hip, xend = 15, yend = line_height_hip),
@@ -281,7 +280,7 @@ p1_knee <- ggplot(data = speed_predictions_dt_long[dimension == "knee"]) +
   labs(x = "Normalised Time ($\\%$ of Stride)",
        y = "Angle ($^{\\circ}$)",
        colour = "Speed (kmph):") +
-  guides(colour = guide_legend(override.aes = list(size = 1))) +
+  guides(colour = guide_legend(override.aes = list(linewidth = 1))) +
   labs(title = "(b) Knee Angle") +
   annotate(geom = "text", x = 27, y = text_height_knee, label = "Stance", size = text_size) +
   geom_segment(mapping = aes(x = 37, y = line_height_knee, xend = 15, yend = line_height_knee),
@@ -321,10 +320,6 @@ p3 <- ggplot(data = barplot_dt) +
   theme(legend.position = "none") +
   ggtitle("(d) Observed Speeds")
 
-(p_speed <- ggarrange(p1_hip, p1_knee, p2, p3, 
-                      nrow = 1, ncol = 4,
-                      common.legend = TRUE,
-                      legend = "bottom"))
 
 # Save for Publishing: ---------------------------------------------------
 
@@ -332,11 +327,12 @@ p3 <- ggplot(data = barplot_dt) +
 
 tikz(file.path(plots_path, "speed-predictions.tex"),
      width = 1 * doc_width_inches, 
-     height = 1.025 * (doc_width_inches))
+     height = 1.025 * (doc_width_inches),
+     standAlone = TRUE)
 ggarrange(p1_hip, p1_knee, p2, p3, nrow = 2, ncol = 2, common.legend = TRUE, legend = "bottom")
 dev.off()
 
-
+tinytex::lualatex(file.path(plots_path, "speed-predictions.tex"))
 # Extra: American Spelling for JASA: --------------------------------------
 
 p1_hip_Am <- p1_hip + labs(x = "Normalized Time ($\\%$ of Stride)")
@@ -354,7 +350,8 @@ p1_knee_Am <- p1_knee + labs(x = "Normalized Time ($\\%$ of Stride)")
 
 tikz(file.path(plots_path, "speed-predictions-Am.tex"),
      width = 1.5 * doc_width_inches, 
-     height = 0.45 * (doc_width_inches))
+     height = 0.45 * (doc_width_inches),
+     standAlone = TRUE)
 ggarrange(p1_hip_Am, p1_knee_Am, p2, p3, nrow = 1, ncol = 4, common.legend = TRUE, legend = "bottom")
 dev.off()
 
