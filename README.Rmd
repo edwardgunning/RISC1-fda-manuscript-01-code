@@ -52,6 +52,10 @@ It took **`r boot_time_mins` minutes** to run the bootstrap analysis using **`r 
 
 ## Reproducibility
 
+```{r, echo=FALSE}
+ readRDS(file = file.path(results_path, "bootstrap-results.rds"))$sessionInfo
+```
+
 We have stored `.Random.seed` on each iteration of the simulation in a list called `simulation_seeds`. The seed can be set to produce any iteration by using the command (described [here](https://stackoverflow.com/questions/19614314/can-i-get-seed-somehow)):
 
 ```{r, eval = FALSE}
@@ -59,5 +63,7 @@ We have stored `.Random.seed` on each iteration of the simulation in a list call
 given_seed <- simulation_seeds[[i]]
 .Random.seed <- given_seed
 ```
+
+
 
 
