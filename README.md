@@ -24,6 +24,13 @@ using functional data analysis’
       Results](code/analysis/BFMM-paper-covariance-extra.R)
     - :page_facing_up: [08 - Analysis of
       ICC](code/analysis/BFMM-icc-analysis.R)
+    - :page_facing_up: Scripts for comparison with existing approaches
+      ([1](code/analysis/BFMM-multifamm-comparison.R),
+      [2](code/analysis/BFMM-multifamm-comparison-figures.R),
+      [3](code/analysis/BFMM-multifamm-comparison-boot-02.R),
+      [4](code/analysis/BFMM-multifamm-comparison-boot-figures-02.R),
+      [5](code/analysis/BFMM-fui-comparison.R),
+      [6](code/analysis/BFMM-fui-comparison-figure.R))
   - :open_file_folder: **functions** – custom functions used to perform
     the data analysis and simulation
     - :page_facing_up: [Custom `ggplot2` theme for
@@ -48,6 +55,10 @@ using functional data analysis’
       Errors (SEs) for Coverage](code/functions/binomial_se.R)
     - :page_facing_up: [Tests Monte Carlo SEs for
       Coverage](code/functions/binomial_se_tests.R)
+    - :open_file_folder: [Functions for the FUI comparison (with a
+      note)](code/functions/FUI-functions/)
+    - :page_facing_up: [Function for multiFAMM
+      comparison](code/functions/rough_fit_mfamm_model.R)
   - :open_file_folder: **simulation** – scripts to generate and perform
     the short simulation in the paper
     - :page_facing_up: [01 - Fit a simple model and generate empirical
