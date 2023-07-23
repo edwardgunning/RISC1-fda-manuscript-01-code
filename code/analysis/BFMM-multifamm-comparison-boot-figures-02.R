@@ -20,7 +20,9 @@ parameter_results_dt <- bootstrap_results$parameter_results_dt
 results_list <- mfamm_results$results_list
 time_vec <- mfamm_results$time_vec
 
-sum(time_vec)/60^2
+print(paste("Bootstrap took", (sum(time_vec)/60^2), "hours"))
+
+
 
 boot_index <- seq_len(10)
 names(boot_index) <- paste0(boot_index)

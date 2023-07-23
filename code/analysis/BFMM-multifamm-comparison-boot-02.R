@@ -6,17 +6,23 @@ library(multifamm)  # CRAN v0.1.1
 library(sparseFLMM) # CRAN v0.4.1
 
 
+# -------------------------------------------------------------------------
 source(file = here::here(
   "code",
   "functions",
   "functions-helper-smoothing.R"
 ))
 source(here::here(
-  "code/functions/rough_fit_mfamm_model.R"
+  "code",
+  "functions", 
+  "rough_fit_mfamm_model.R"
 ))
 
+
+# -------------------------------------------------------------------------
 data_path <- here::here("data")
-subject_side_coef_reg <- readRDS(file.path(data_path, "subject_side_coef_reg.rds"))
+subject_side_coef_reg <- readRDS(file.path(data_path,
+                                           "subject_side_coef_reg.rds"))
 
 # set up basis to represent the data.
 bspl80 <- fda::create.bspline.basis(
