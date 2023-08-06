@@ -13,7 +13,7 @@ library(ggplot2)    # CRAN v3.4.0
 library(lme4)       # CRAN v1.1-30
 
 
-# -------------------------------------------------------------------------
+# Graphics Settings: ------------------------------------------------------
 source(here::here("code", "functions", "theme_gunning.R"))
 theme_gunning() # set theme
 # + some customisations for plots
@@ -23,6 +23,10 @@ theme_update(panel.grid.major = element_blank(),
 # rough guide for sizing of plot outputs:
 doc_width_cm <- 16
 doc_width_inches <- doc_width_cm *  0.3937
+
+# to use International System of Units
+# System of measurement
+options(tikzLatexPackages = c(getOption( "tikzLatexPackages" ),"\\usepackage{siunitx}"))
 
 # Path to save the outputs of analysis: -----------------------------------
 plots_path <- here::here("outputs", "figures")
@@ -256,7 +260,7 @@ p1_hip <- ggplot(data = speed_predictions_dt_long[dimension == "hip"]) +
   geom_line() +
   labs(x = "Normalised Time ($\\%$ of Stride)",
        y = "Angle ($^{\\circ}$)",
-       colour = "Speed (kmph):") +
+       colour = "Speed (\\si{\\km \\per \\hour}):") +
   guides(colour = guide_legend(override.aes = list(linewidth = 1))) +
   labs(title = "(a) Hip Angle") +
   annotate(geom = "text", x = 27, y = text_height_hip, label = "Stance", size = text_size) +
@@ -279,7 +283,7 @@ p1_knee <- ggplot(data = speed_predictions_dt_long[dimension == "knee"]) +
   geom_line() +
   labs(x = "Normalised Time ($\\%$ of Stride)",
        y = "Angle ($^{\\circ}$)",
-       colour = "Speed (kmph):") +
+       colour = "Speed (\\si{\\km \\per \\hour}):") +
   guides(colour = guide_legend(override.aes = list(linewidth = 1))) +
   labs(title = "(b) Knee Angle") +
   annotate(geom = "text", x = 27, y = text_height_knee, label = "Stance", size = text_size) +
@@ -302,7 +306,7 @@ p2<-ggplot(data = speed_dt_wide) +
              mapping = aes(label = paste0("$", t, "\\%$")), size = 2.25, col = 1) +
   labs(x = "Hip Angle ($^{\\circ}$)",
        y = "Knee Angle ($^{\\circ}$)",
-       colour = "Speed (kmph):",
+       colour = "Speed (\\si{\\km \\per \\hour}):",
        title = "(c) Angle-Angle Diagram") +
   guides(colour = guide_legend(override.aes = list(size = 1)))
 p2
@@ -314,7 +318,7 @@ p3 <- ggplot(data = barplot_dt) +
   aes(x = self_selected_speed_kmph, fill = fill_var) +
   geom_bar(col = "black", linewidth = 0.25) +
   scale_fill_manual(values = c("grey", gg_color_hue(5))) +
-  labs(x = "Speed (kmph):", y = "Count", title = "Barplot of Observed Speeds") +
+  labs(x = "Speed (\\si{\\km \\per \\hour}):", y = "Count", title = "Barplot of Observed Speeds") +
   scale_y_continuous(expand = c(0, 0), limits = c(0, 145)) +
   scale_x_continuous(breaks = c(6:16)) + 
   theme(legend.position = "none") +
