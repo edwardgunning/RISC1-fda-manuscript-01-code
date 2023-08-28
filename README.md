@@ -8,7 +8,7 @@ using functional data analysis’
   - :open_file_folder: **analysis** – scripts used to perform the data
     analysis.
     - :page_facing_up: [01 - Exploratory Plot for
-      Introduction](code/analysis/BFMM-paper-basis-transformation.R)
+      Introduction](code/analysis/BFMM-introduction-plot.R)
     - :page_facing_up: [02 - Basis
       Transformation](code/analysis/BFMM-paper-basis-transformation.R)
     - :page_facing_up: [03 - Model

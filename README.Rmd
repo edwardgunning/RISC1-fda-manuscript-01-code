@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 * :open_file_folder: **code**
   * :open_file_folder: **analysis** -- scripts used to perform the data analysis.
-    * :page_facing_up: [01 - Exploratory Plot for Introduction](code/analysis/BFMM-paper-basis-transformation.R)
+    * :page_facing_up: [01 - Exploratory Plot for Introduction](code/analysis/BFMM-introduction-plot.R)
     * :page_facing_up: [02 - Basis Transformation](code/analysis/BFMM-paper-basis-transformation.R)
     * :page_facing_up: [03 - Model Fitting](code/analysis/BFMM-paper-modelling.R)
     * :page_facing_up: [04 - Bootstrap and Wald Inference](code/analysis/BFMM-paper-bootstrap.R)
