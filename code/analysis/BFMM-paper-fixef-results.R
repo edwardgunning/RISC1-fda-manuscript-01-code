@@ -330,10 +330,10 @@ p3 <- ggplot(data = barplot_dt) +
 
 
 tikz(file.path(plots_path, "speed-predictions.tex"),
-     width = 2 * doc_width_inches, 
-     height = 0.55 * (doc_width_inches),
+     width = 1 * doc_width_inches, 
+     height = 1.025 * (doc_width_inches),
      standAlone = TRUE)
-ggarrange(p1_hip, p1_knee, p2, p3, nrow = 1, ncol = 4, common.legend = TRUE, legend = "bottom")
+ggarrange(p1_hip, p1_knee, p2, p3, nrow = 2, ncol = 2, common.legend = TRUE, legend = "bottom")
 dev.off()
 
 tinytex::lualatex(file.path(plots_path, "speed-predictions.tex"))
